@@ -1,0 +1,25 @@
+{
+  "name": "synic",
+  "version": "0.1.0",
+  "authors": [
+    "Clark Perkins <clark.perkins@digitalreasoning.com>"
+  ],
+  "description": "Javascript Client for the SYNthesys Ingestion Coordinator",
+  "keywords": [
+    "synthesys",
+    "synic",
+    "ingestion"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": ">= 1.9.1"
+  }
+}
