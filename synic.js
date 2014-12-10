@@ -5,10 +5,11 @@
  */
 (function() {
     var SynicClient = function(synicURL) {
-        this.synicURL = synicURL;
-        if (this.synicURL === null || synicURL === undefined) {
+        if (!synicURL) {
             // Default URL
             this.synicURL = 'http://localhost:9011';
+        } else {
+            this.synicURL = synicURL;
         }
     };
 
