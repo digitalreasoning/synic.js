@@ -25,7 +25,7 @@
          */
         ajax: function(method, endpoint, data, callback) {
             var ajaxData = {
-                method: method,
+                type: method,
                 url: this.synicURL + '/synic/api' + endpoint,
                 contentType: 'application/json',
                 headers: {},
@@ -61,26 +61,36 @@
          *   Synic App
          */
         getAppInfo: function(callback) {
-
+            return this.ajax('GET', '/app', null, callback);
         },
         getVersion: function(callback) {
-
+            return this.getAppInfo(function(resp) {
+                callback(resp.version);
+            });
         },
 
         /*
          *   DB
          */
         listDBs: function(callback) {
-
+            return this.ajax('GET', '/db', null, callback);
         },
         getDB: function(dbname, callback) {
-
+            return this.ajax('GET', '/db/'+dbname, null, callback);
         },
 
         /*
          *   KG
          */
         createKG: function(kgname, db, config, callback) {
+            if (!config) {
+                config = {};
+            }
+
+            if (!db) {
+                db = 'default';
+            }
+
             var kgdata = {
                 name: kgname,
                 db: db,
@@ -92,16 +102,21 @@
             return this.ajax('GET', '/kb', null, callback);
         },
         listKGNames: function(callback) {
-
+            return this.listKGs(function(resp) {
+                // Only call the callback with a list of names
+                callback(resp.map(function(kg) {
+                    return kg.name;
+                }));
+            });
         },
         getKG: function(kgname, callback) {
             return this.ajax('GET', '/kb/'+kgname, null, callback);
         },
         getKGConfig: function(kgname, callback) {
-
+            return this.ajax('GET', '/kb/'+kgname+'/config', null, callback);
         },
         updateKGConfig: function(kgname, config, callback) {
-            return this.ajax('PUT', '/kb/'+kgname, configdata, callback);
+            return this.ajax('PATCH', '/kb/'+kgname+'/config', config, callback);
         },
         deleteKG: function(kgname, callback) {
             return this.ajax('DELETE', '/kb/'+kgname, null, callback);
@@ -111,32 +126,70 @@
          *   App Config
          */
         addKGAppConfig: function(kgname, appName, members, universal, callback) {
+            if (!members) {
+                members = {};
+            }
 
+            if (!universal) {
+                universal = {};
+            }
+
+            var configData = {
+                appName: appName,
+                members: members,
+                universal: universal
+            };
+
+            return this.ajax('POST', '/kb/'+kgname+'/config', configData, callback);
         },
         getKGAppConfig: function(kgname, appName, callback) {
-
+            return this.ajax('GET', '/kb/'+kgname+'/config/'+appName, null, callback);
         },
         addKGAppMember: function(kgname, appName, memberName, config, callback) {
+            if (!config) {
+                config = {};
+            }
 
+            var configData = {
+                memberName: memberName,
+                config: config
+            };
+
+            return this.ajax('POST', '/kb/'+kgname+'/config/'+appName+'/members', configData, callback);
         },
         updateKGAppMember: function(kgname, appName, memberName, config, callback) {
-
+            return null;
         },
 
         /*
          *   Processes
          */
-        listProcesses: function(filter, callback) {
+        listProcesses: function(callback) {
             return this.ajax('GET', '/process', null, callback);
         },
-        listProcessIDs: function(filter, callback) {
-
+        listProcessIDs: function(callback) {
+            return this.listProcesses(function(resp) {
+                callback(resp.map(function(proc) {
+                    return proc.id;
+                }));
+            });
         },
         getProcess: function(procId, callback) {
             return this.ajax('GET', '/process/'+procid, null, callback);
         },
         triggerProcess: function(kgname, appName, processType, config, callback) {
-            return this.ajax('POST', '/process', procdata, callback);
+            if (!config) {
+                config = {};
+            }
+
+            var procData = {
+                kb: kgname,
+                application: appName,
+                processType: processType,
+                invocationConfig: config
+            };
+
+            return this.ajax('POST', '/process', procData, callback);
         },
         listProcessTypes: function(callback) {
             return this.ajax('GET', '/processType', null, callback);
@@ -146,35 +199,41 @@
          *   Schedules
          */
         listSchedules: function(callback) {
-
+            return this.ajax('GET', '/scheduler/schedule', null, callback);
         },
         createSchedule: function(schedule, callback) {
-
+            return null;
         },
         createScheduleFromTemplate: function(templateName, mappings, callback) {
-
+            var data = {
+                templateName: templateName,
+            };
+            if (mappings) {
+                data.mappings = mappings;
+            }
+            return this.ajax('POST', '/scheduler/schedule', data, callback);
+        },
+        listTemplates: function(callback) {
+            return this.ajax('GET', '/scheduler/template', null, callback);
         },
         getTemplate: function(templateName, callback) {
-
+            return this.ajax('GET', '/scheduler/template/'+templateName, null, callback);
         },
         getSchedule: function(scheduleId, callback) {
-
-        },
-        getScheduleUrl: function(scheduleId, callback) {
-
+            return this.ajax('GET', '/scheduler/schedule/'+scheduleId, null, callback);
         },
         startSchedule: function(scheduleId, callback) {
-
+            return this.ajax('PATCH', '/scheduler/schedule/'+scheduleId, {status: 'STARTING'}, callback);
         },
         stopSchedule: function(scheduleId, callback) {
-
+            return this.ajax('PATCH', '/scheduler/schedule/'+scheduleId, {status: 'STOPPING'}, callback);
         },
 
         /*
          *   Job Data
          */
         getJobData: function(kgname, procId, callback) {
-
+            return this.ajax('GET', '/jobdata/'+kgname+'/'+procId, null, callback);
         }
 
     };
@@ -182,7 +241,7 @@
     // Expose SynicClient to the global object
     window.SynicClient = SynicClient;
 
-    if ( typeof define === "function" && define.amd) {
+    if (typeof define === "function" && define.amd) {
         define(['synic'], function () { return SynicClient; } );
     }
 
