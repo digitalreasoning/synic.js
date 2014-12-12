@@ -43,7 +43,7 @@
                 }
             };
 
-            if (data !== null && data !== undefined) {
+            if (data) {
                 ajaxData.data = JSON.stringify(data);
             }
 
@@ -126,6 +126,54 @@
         /*
          *   App Config
          */
+        configKG: function(kgname, appName, member, property, value, callback) {
+            var self = this;
+            // Build the config object, will either be universal or members
+            var configObject = {};
+            if (member) {
+                // Member config
+                configObject[member] = {};
+                configObject[member].config = {};
+                configObject[member].config[property] = value;
+            } else {
+                // Universal config
+                configObject[property] = value
+            }
+
+            this.getKGConfig(kgname, function(resp) {
+                // Check to see if the app exists first
+                var exists = false;
+                resp.forEach(function(appconf) {
+                    if (appconf.appName === appName) {
+                        if (member) {
+                            exists = true;
+                        }
+                    }
+                });
+
+                if (!exists) {
+                    // If the app doesn't exist, create it
+                    if (member) {
+                        // Add with member config
+                        self.addKGAppConfig(kgname, appName, configObject, {}, callback);
+                    } else {
+                        // Add with universal config
+                        self.addKGAppConfig(kgname, appName, {}, configObject, callback);
+                    }
+                } else {
+                    // Otherwise we just need to update the current app
+                    var configData = {
+                        appName: appName
+                    };
+                    if (member) {
+                        configData.members = configObject;
+                    } else {
+                        configData.universal = configObject;
+                    }
+                    self.ajax('PATCH', '/kb/'+kgname+'/config/'+appName, configData, callback);
+                }
+            });
+        },
         addKGAppConfig: function(kgname, appName, members, universal, callback) {
             if (!members) {
                 members = {};
@@ -222,6 +270,13 @@
         },
         getSchedule: function(scheduleId, callback) {
             return this.ajax('GET', '/scheduler/schedule/'+scheduleId, null, callback);
+        },
+        updateScheduleMappings: function(scheduleId, mappings, callback) {
+            // Not sure about this method... may not do anything
+            var updateData = {
+                mappings: mappings
+            };
+            return this.ajax('PATCH', '/scheduler/schedule/'+scheduleId, updateData, callback);
         },
         startSchedule: function(scheduleId, callback) {
             return this.ajax('PATCH', '/scheduler/schedule/'+scheduleId, {status: 'STARTING'}, callback);
