@@ -253,14 +253,31 @@
         createSchedule: function(schedule, callback) {
             return null;
         },
-        createScheduleFromTemplate: function(templateName, mappings, callback) {
+        createScheduleFromTemplate: function(templateName, mappings, startAfterCreation, callback) {
+            var self = this;
+
             var data = {
                 templateName: templateName,
             };
             if (mappings) {
                 data.mappings = mappings;
             }
-            return this.ajax('POST', '/scheduler/schedule', data, callback);
+
+            // Set the callback function - if we want to start the schedule after creation, then the callback needs to
+            // start the schedule before calling the users callback
+            var realCallback;
+            if (startAfterCreation) {
+                realCallback = function(resp) {
+                    self.startSchedule(resp.id, function(startResp) {
+                        // Callback with the original resp instead of the response of starting
+                        callback(resp);
+                    });
+                };
+            } else {
+                realCallback = callback;
+            }
+
+            return this.ajax('POST', '/scheduler/schedule', data, realCallback);
         },
         listTemplates: function(callback) {
             return this.ajax('GET', '/scheduler/template', null, callback);
