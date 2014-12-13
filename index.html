@@ -1,0 +1,33 @@
+<html>
+<head>
+    <title>Synic.js test page</title>
+</head>
+<body>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>DB</th>
+        </tr>
+    </thead>
+    <tbody id="kg"></tbody>
+</table>
+
+
+<script src="synic.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var client = new SynicClient('http://clark-cdh5-nn.dev.digitalreasoning.com:9011');
+
+        client.listKGs(function(resp) {
+            var tableHtml = '';
+            resp.forEach(function(kg) {
+                tableHtml += '<tr><td>'+kg.name+'</td><td>'+kg.db+'</td></tr>';
+            });
+            $('#kg').html(tableHtml);
+        });
+    });
+</script>
+</body>
+</html>
