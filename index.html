@@ -4,16 +4,23 @@
 </head>
 <body>
 
-<h1>Synic Version <span id="version"></span></h1>
 
-<br/><br/>
+<h1>Synthesys Ingestion Coordinator</h1>
+<h2>version <span id="version"></span></h2>
+
+<br/>
+
+<input id="url" type="text" placeholder="SynIC URL" style="width: 300px;"/>
+<button id="changeURL">Update URL</button>
+
+<br/><br/><br/>
 
 <input id="createKG" type="text" placeholder="KG Name"/>
 <button id="submitKG">Create KB</button>
 
 <p id="createStatus"></p>
 
-<br/><br/><br/>
+<br/><br/>
 
 <table>
     <thead>
@@ -30,7 +37,7 @@
 <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        var client = new SynicClient('http://clark-cdh5-nn.dev.digitalreasoning.com:9011');
+        var client = new SynicClient();
 
         function loadKG() {
             client.listKGs().then(function(resp) {
@@ -53,11 +60,16 @@
             kgname.val('');
         });
 
-        loadKG();
+        $('#changeURL').click(function() {
+            client.setURL($('#url').val());
 
-        client.getVersion().then(function(version) {
-            $('#version').html(version);
+            loadKG();
+
+            client.getVersion().then(function(version) {
+                $('#version').html(version);
+            });
         });
+
     });
 </script>
 </body>

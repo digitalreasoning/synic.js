@@ -11,7 +11,6 @@
      * @param {(object|Array|string)} responseBody - the response body
      */
 
-
     /**
      * Represents a synic client object with methods for all the synic functionality.
      * @param {string} [synicURL=http://localhost:9011]- the URL of the synic server.  Defaults to 'http://localhost:9011'
@@ -30,14 +29,15 @@
         constructor: SynicClient,
 
         /**
-         * Helper method, to be used by all other methods
+         * Helper method, to be used by all other methods - NOT MEANT TO BE USED BY THE END USER
+         *
          * @param {string} method - the request method
          * @param {string} endpoint - the resource endpoint
          * @param {object} data - any request data (only used if it is not null or undefined)
          * @param {requestCallback} [callback] - a callback function that will be called with the response as it's single parameter
          * @returns {promise}
          */
-        ajax: function(method, endpoint, data, callback) {
+        _ajax: function(method, endpoint, data, callback) {
             var ajaxData = {
                 type: method,
                 url: this.synicURL + '/synic/api' + endpoint,
@@ -81,7 +81,7 @@
          * @returns {promise}
          */
         getAppInfo: function(callback) {
-            return this.ajax('GET', '/app', null, callback);
+            return this._ajax('GET', '/app', null, callback);
         },
         /**
          * Get the version of the synic server
@@ -115,7 +115,7 @@
          * @returns {promise}
          */
         listDBs: function(callback) {
-            return this.ajax('GET', '/db', null, callback);
+            return this._ajax('GET', '/db', null, callback);
         },
         /**
          * Get information about a specific DB
@@ -125,7 +125,7 @@
          * @returns {promise}
          */
         getDB: function(dbname, callback) {
-            return this.ajax('GET', '/db/'+dbname, null, callback);
+            return this._ajax('GET', '/db/'+dbname, null, callback);
         },
 
         /*
@@ -154,7 +154,7 @@
                 db: db,
                 config: config
             };
-            return this.ajax('POST', '/kb', kgdata, callback);
+            return this._ajax('POST', '/kb', kgdata, callback);
         },
         /**
          * Get a list of all the KGs from the server
@@ -163,7 +163,7 @@
          * @returns {promise}
          */
         listKGs: function(callback) {
-            return this.ajax('GET', '/kb', null, callback);
+            return this._ajax('GET', '/kb', null, callback);
         },
         /**
          * Get an array of all the KG names instead of the full objects
@@ -202,7 +202,7 @@
          * @returns {promise}
          */
         getKG: function(kgname, callback) {
-            return this.ajax('GET', '/kb/'+kgname, null, callback);
+            return this._ajax('GET', '/kb/'+kgname, null, callback);
         },
         /**
          * Get the config of a specifig KG
@@ -212,7 +212,7 @@
          * @returns {promise}
          */
         getKGConfig: function(kgname, callback) {
-            return this.ajax('GET', '/kb/'+kgname+'/config', null, callback);
+            return this._ajax('GET', '/kb/'+kgname+'/config', null, callback);
         },
         /**
          * Update the config for a KG.  FOR ADVANCED USERS ONLY.  This requires a large config object with a
@@ -224,7 +224,7 @@
          * @returns {promise}
          */
         updateKGConfig: function(kgname, config, callback) {
-            return this.ajax('PATCH', '/kb/'+kgname+'/config', config, callback);
+            return this._ajax('PATCH', '/kb/'+kgname+'/config', config, callback);
         },
         /**
          * Delete a KG
@@ -234,7 +234,7 @@
          * @returns {promise}
          */
         deleteKG: function(kgname, callback) {
-            return this.ajax('DELETE', '/kb/'+kgname, null, callback);
+            return this._ajax('DELETE', '/kb/'+kgname, null, callback);
         },
 
         /*
@@ -295,7 +295,7 @@
                     } else {
                         configData.universal = configObject;
                     }
-                    return self.ajax('PATCH', '/kb/'+kgname+'/config/'+appName, configData, callback);
+                    return self._ajax('PATCH', '/kb/'+kgname+'/config/'+appName, configData, callback);
                 }
             });
         },
@@ -325,7 +325,7 @@
                 universal: universal
             };
 
-            return this.ajax('POST', '/kb/'+kgname+'/config', configData, callback);
+            return this._ajax('POST', '/kb/'+kgname+'/config', configData, callback);
         },
         /**
          * Get the config for a specific app on a KG
@@ -336,7 +336,7 @@
          * @returns {promise}
          */
         getKGAppConfig: function(kgname, appName, callback) {
-            return this.ajax('GET', '/kb/'+kgname+'/config/'+appName, null, callback);
+            return this._ajax('GET', '/kb/'+kgname+'/config/'+appName, null, callback);
         },
         /**
          * Add a NEW member to an app on a KG
@@ -358,7 +358,7 @@
                 config: config
             };
 
-            return this.ajax('POST', '/kb/'+kgname+'/config/'+appName+'/members', configData, callback);
+            return this._ajax('POST', '/kb/'+kgname+'/config/'+appName+'/members', configData, callback);
         },
         /**
          * Update the member config on an app
@@ -371,7 +371,7 @@
          * @returns {promise}
          */
         updateKGAppMember: function(kgname, appName, memberName, config, callback) {
-            return this.ajax('PATCH', '/kb/'+kgname+'/config/'+appName+'/members/'+memberName+'/config', config, callback);
+            return this._ajax('PATCH', '/kb/'+kgname+'/config/'+appName+'/members/'+memberName+'/config', config, callback);
         },
 
         /*
@@ -384,7 +384,7 @@
          * @returns {promise}
          */
         listProcesses: function(callback) {
-            return this.ajax('GET', '/process', null, callback);
+            return this._ajax('GET', '/process', null, callback);
         },
         /**
          * Get a list of all the process IDs
@@ -418,7 +418,7 @@
          * @returns {promise}
          */
         getProcess: function(procId, callback) {
-            return this.ajax('GET', '/process/'+procid, null, callback);
+            return this._ajax('GET', '/process/'+procid, null, callback);
         },
         /**
          * Trigger a process to start it
@@ -442,7 +442,7 @@
                 invocationConfig: config
             };
 
-            return this.ajax('POST', '/process', procData, callback);
+            return this._ajax('POST', '/process', procData, callback);
         },
         /**
          * Get a list of all the available process types
@@ -451,7 +451,7 @@
          * @returns {promise}
          */
         listProcessTypes: function(callback) {
-            return this.ajax('GET', '/processType', null, callback);
+            return this._ajax('GET', '/processType', null, callback);
         },
 
         /*
@@ -464,7 +464,7 @@
          * @returns {promise}
          */
         listSchedules: function(callback) {
-            return this.ajax('GET', '/scheduler/schedule', null, callback);
+            return this._ajax('GET', '/scheduler/schedule', null, callback);
         },
         /**
          * Create a schedule.  ADVANCED USERS ONLY.  The schedule object has a very specific structure.
@@ -474,7 +474,7 @@
          * @returns {promise}
          */
         createSchedule: function(schedule, callback) {
-            return this.ajax('POST', '/scheduler/schedule', schedule, callback);
+            return this._ajax('POST', '/scheduler/schedule', schedule, callback);
         },
         /**
          * Create a schedule from a template that already lives in the synic server.  Show the list of templates using
@@ -512,7 +512,7 @@
                 realCallback = callback;
             }
 
-            return this.ajax('POST', '/scheduler/schedule', data, realCallback);
+            return this._ajax('POST', '/scheduler/schedule', data, realCallback);
         },
         /**
          * Get a list of all the templates stored on the server
@@ -521,7 +521,7 @@
          * @returns {promise}
          */
         listTemplates: function(callback) {
-            return this.ajax('GET', '/scheduler/template', null, callback);
+            return this._ajax('GET', '/scheduler/template', null, callback);
         },
         /**
          * Get information about a specific template
@@ -531,7 +531,7 @@
          * @returns {promise}
          */
         getTemplate: function(templateName, callback) {
-            return this.ajax('GET', '/scheduler/template/'+templateName, null, callback);
+            return this._ajax('GET', '/scheduler/template/'+templateName, null, callback);
         },
         /**
          * Get information about a specific schedule
@@ -541,7 +541,7 @@
          * @returns {promise}
          */
         getSchedule: function(scheduleId, callback) {
-            return this.ajax('GET', '/scheduler/schedule/'+scheduleId, null, callback);
+            return this._ajax('GET', '/scheduler/schedule/'+scheduleId, null, callback);
         },
         /**
          * In order for this to take effect, you must also change the status of the schedule (synic server limitation)
@@ -554,7 +554,7 @@
             var updateData = {
                 mappings: mappings
             };
-            return this.ajax('PATCH', '/scheduler/schedule/'+scheduleId, updateData, callback);
+            return this._ajax('PATCH', '/scheduler/schedule/'+scheduleId, updateData, callback);
         },
         /**
          * Start the schedule with the given ID
@@ -564,7 +564,7 @@
          * @returns {promise}
          */
         startSchedule: function(scheduleId, callback) {
-            return this.ajax('PATCH', '/scheduler/schedule/'+scheduleId, {status: 'STARTING'}, callback);
+            return this._ajax('PATCH', '/scheduler/schedule/'+scheduleId, {status: 'STARTING'}, callback);
         },
         /**
          * Stop the schedule with the given ID
@@ -574,7 +574,7 @@
          * @returns {promise}
          */
         stopSchedule: function(scheduleId, callback) {
-            return this.ajax('PATCH', '/scheduler/schedule/'+scheduleId, {status: 'STOPPING'}, callback);
+            return this._ajax('PATCH', '/scheduler/schedule/'+scheduleId, {status: 'STOPPING'}, callback);
         },
 
         /*
@@ -589,7 +589,7 @@
          * @returns {promise}
          */
         getJobData: function(kgname, procId, callback) {
-            return this.ajax('GET', '/jobdata/'+kgname+'/'+procId, null, callback);
+            return this._ajax('GET', '/jobdata/'+kgname+'/'+procId, null, callback);
         }
 
     };
