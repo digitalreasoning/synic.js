@@ -1,8 +1,20 @@
 <html>
 <head>
-    <title>Synic.js test page</title>
+    <title>synic.js static test page</title>
 </head>
 <body>
+
+<h1>Synic Version <span id="version"></span></h1>
+
+<br/><br/>
+
+<input id="createKG" type="text" placeholder="KG Name"/>
+<button id="submitKG">Create KB</button>
+
+<p id="createStatus"></p>
+
+<br/><br/><br/>
+
 <table>
     <thead>
         <tr>
@@ -20,12 +32,31 @@
     $(document).ready(function() {
         var client = new SynicClient('http://clark-cdh5-nn.dev.digitalreasoning.com:9011');
 
-        client.listKGs(function(resp) {
-            var tableHtml = '';
-            resp.forEach(function(kg) {
-                tableHtml += '<tr><td>'+kg.name+'</td><td>'+kg.db+'</td></tr>';
+        function loadKG() {
+            client.listKGs().then(function(resp) {
+                var tableHtml = '';
+                resp.forEach(function(kg) {
+                    tableHtml += '<tr><td>'+kg.name+'</td><td>'+kg.db+'</td></tr>';
+                });
+                $('#kg').html(tableHtml);
             });
-            $('#kg').html(tableHtml);
+        }
+
+        $('#submitKG').click(function() {
+            var kgname = $('#createKG');
+            var status = $('#createStatus');
+            status.html('CREATING');
+            client.createKG(kgname.val(), 'default', {}, function(resp) {
+                status.html('');
+                loadKG();
+            });
+            kgname.val('');
+        });
+
+        loadKG();
+
+        client.getVersion().then(function(version) {
+            $('#version').html(version);
         });
     });
 </script>
