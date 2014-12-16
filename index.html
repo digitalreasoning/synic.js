@@ -61,15 +61,17 @@
         });
 
         $('#changeURL').click(function() {
+            $('#version').html('');
+            $('#kg').html('');
+
             client.setURL($('#url').val());
 
             loadKG();
 
-            client.getVersion().then(function(version) {
+            client.getVersion(function(version) {
                 $('#version').html(version);
             });
         });
-
     });
 </script>
 </body>

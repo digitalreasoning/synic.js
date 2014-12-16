@@ -328,6 +328,17 @@
             return this._ajax('POST', '/kb/'+kgname+'/config', configData, callback);
         },
         /**
+         * Adds an empty configuration object for an app on a KG
+         *
+         * @param {string} kgname - the name of the KG
+         * @param {string} appName - the name of the app to create
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        addEmptyKGAppConfig: function(kgname, appName, callback) {
+            return this.addKGAppConfig(kgname, appName, {}, {}, callback);
+        },
+        /**
          * Get the config for a specific app on a KG
          *
          * @param {string} kgname - the name of the KG
@@ -337,6 +348,30 @@
          */
         getKGAppConfig: function(kgname, appName, callback) {
             return this._ajax('GET', '/kb/'+kgname+'/config/'+appName, null, callback);
+        },
+        /**
+         * Delete all configuration information for an app
+         *
+         * @param {string} kgname - the KG to delete config from
+         * @param {string} appName - the app to delete
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        deleteKGAppConfig: function(kgname, appName, callback) {
+            return this._ajax('DELETE', '/kb/'+kgname+'/config/'+appName, null, callback);
+        },
+        /**
+         * Update the universal config on an app.  This does a PUT, so it completely replaces any config on the server
+         * already
+         *
+         * @param {string} kgname - the KG name
+         * @param {string} appName - the app to configure
+         * @param {object} config - the new config object
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        updateKGAppUniversalConfig: function(kgname, appName, config, callback) {
+            return this._ajax('PUT', '/kb/'+kgname+'/config/'+appName+'/universal', config, callback);
         },
         /**
          * Add a NEW member to an app on a KG
@@ -361,7 +396,8 @@
             return this._ajax('POST', '/kb/'+kgname+'/config/'+appName+'/members', configData, callback);
         },
         /**
-         * Update the member config on an app
+         * Update the member config on an app.  This does a PUT, so it completely replaces any config on the server
+         * already
          *
          * @param {string} kgname - the KG name
          * @param {string} appName - the app name
@@ -371,7 +407,19 @@
          * @returns {promise}
          */
         updateKGAppMember: function(kgname, appName, memberName, config, callback) {
-            return this._ajax('PATCH', '/kb/'+kgname+'/config/'+appName+'/members/'+memberName+'/config', config, callback);
+            return this._ajax('PUT', '/kb/'+kgname+'/config/'+appName+'/members/'+memberName+'/config', config, callback);
+        },
+        /**
+         * Delete all of the config info for the given member of an app
+         *
+         * @param {string} kgname - the KG name
+         * @param {string} appName - the app name
+         * @param {string} memberName - the member to delete
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        deleteKGAppMember: function(kgname, appName, memberName, callback) {
+            return this._ajax('DELETE', '/kb/'+kgname+'/config/'+appName+'/members/'+memberName, null, callback);
         },
 
         /*
