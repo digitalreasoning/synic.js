@@ -10,6 +10,7 @@
     "synic",
     "ingestion"
   ],
+  "main": "synic.js",
   "license": "MIT",
   "private": true,
   "ignore": [

@@ -26,7 +26,8 @@ First you must create an instance of the client:
 
 ```javascript
 // Replace YOUR_SYNIC_SERVER_HOST with the hostname or IP of your synic server.
-// If you do not pass a string as a parameter to the constructor, the url will default to http://localhost:9011
+// If you do not pass a string as a parameter to the constructor, the url
+// will default to http://localhost:9011
 var client = new SynicClient("http://YOUR_SYNIC_SERVER_HOST:9011");
 ```
 
@@ -43,7 +44,8 @@ client.listKGs().then(function(kglist) {
     // Do something with the list of KGs
 });
 
-// You can even do both, since a promise object is ALWAYS returned by the client method
+// You can even do both, since a promise object is ALWAYS returned
+// by each client method
 client.listKGs(function (kglist) {
     var newKGlist;
     // transform the kglist into something else
