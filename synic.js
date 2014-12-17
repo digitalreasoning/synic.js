@@ -49,9 +49,8 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.log('Request failure: '+error);
                     if (callback) {
-                        callback(new Error(error));
+                        callback(new Error(xhr));
                     }
                 }
             };
@@ -224,7 +223,7 @@
          * @returns {promise}
          */
         updateKGConfig: function(kgname, config, callback) {
-            return this._ajax('PATCH', '/kb/'+kgname+'/config', config, callback);
+            return this._ajax('PUT', '/kb/'+kgname+'/config', config, callback);
         },
         /**
          * Delete a KG
@@ -648,7 +647,10 @@
     // Make it work with AMD things, such as require.js
     // Use lowercase synic here, because the filename is synic.js.  AMD module names generally mirror filenames.
     if (typeof define === "function" && define.amd) {
-        define(['synic'], function () { return SynicClient; } );
+        define('synic', ['jquery'], function ($) {
+            return SynicClient;
+        });
     }
 
+    return SynicClient;
 })();
