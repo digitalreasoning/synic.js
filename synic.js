@@ -581,6 +581,26 @@
             return this._ajax('GET', '/scheduler/template/'+templateName, null, callback);
         },
         /**
+         * Get the mappings for a template - useful to know what mappings you need to provide for the schedule to work
+         *
+         * @param {string} templateName - the name of the template
+         * @param {requestCallback} [callback]
+         */
+        getTemplateMappings: function(templateName, callback) {
+            var ret;
+            if (callback) {
+                ret = this.getTemplate(templateName, function(resp) {
+                    callback(resp.mappings);
+                });
+            } else {
+                ret = this.getTemplate(templateName);
+            }
+
+            return ret.then(function(resp) {
+                return resp.mappings;
+            });
+        },
+        /**
          * Get information about a specific schedule
          * 
          * @param {string} scheduleId - the ID of the schedule
@@ -592,6 +612,7 @@
         },
         /**
          * In order for this to take effect, you must also change the status of the schedule (synic server limitation)
+         *
          * @param {string} scheduleId - the ID of the schedule to update
          * @param {object} mappings - the mappings to change
          * @param {requestCallback} [callback] - the callback function
