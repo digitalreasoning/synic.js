@@ -431,7 +431,21 @@
          * @returns {promise}
          */
         listProcesses: function(callback) {
-            return this._ajax('GET', '/process', null, callback);
+            return this._ajax('GET', '/process').then(function(processes) {
+                // Sort the processes by time requested
+                var sorted = processes.sort(function(a, b) {
+                    if (a.requestedTime < b.requestedTime) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
+
+                if (callback) {
+                    callback(sorted);
+                }
+                return sorted;
+            });
         },
         /**
          * Get a list of all the process IDs
@@ -440,21 +454,16 @@
          * @returns {promise}
          */
         listProcessIDs: function(callback) {
-            var ret;
-            if (callback) {
-                ret = this.listProcesses(function(resp) {
-                    callback(resp.map(function(proc) {
-                        return proc.id;
-                    }));
-                });
-            } else {
-                ret = this.listProcesses();
-            }
-
-            return ret.then(function(resp) {
-                return resp.map(function(proc) {
+            return this.listProcesses().then(function(processes) {
+                var ids = processes.map(function(proc) {
                     return proc.id;
                 });
+
+                if (callback) {
+                    callback(ids);
+                }
+
+                return ids;
             });
         },
         /**
@@ -588,17 +597,14 @@
          * @returns {promise}
          */
         getTemplateMappings: function(templateName, callback) {
-            var ret;
-            if (callback) {
-                ret = this.getTemplate(templateName, function(resp) {
-                    callback(resp.mappings);
-                });
-            } else {
-                ret = this.getTemplate(templateName);
-            }
+            return this.getTemplate(templateName).then(function(template) {
+                var mappings = template.mappings;
 
-            return ret.then(function(resp) {
-                return resp.mappings;
+                if (callback) {
+                    callback(mappings);
+                }
+
+                return mappings;
             });
         },
         /**
