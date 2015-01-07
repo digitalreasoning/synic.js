@@ -33,7 +33,7 @@
          *
          * @param {string} method - the request method
          * @param {string} endpoint - the resource endpoint
-         * @param {object} data - any request data (only used if it is not null or undefined)
+         * @param {object} [data] - any request data (only used if it is not null or undefined)
          * @param {requestCallback} [callback] - a callback function that will be called with the response as it's single parameter
          * @returns {promise}
          */
@@ -89,17 +89,10 @@
          * @returns {promise}
          */
         getVersion: function(callback) {
-            var ret;
-            if (callback) {
-                // Use the provided callback since it exists
-                ret = this.getAppInfo(function(resp) {
+            return this.getAppInfo().then(function(resp) {
+                if (callback) {
                     callback(resp.version);
-                });
-            } else {
-                ret = this.getAppInfo();
-            }
-
-            return ret.then(function (resp) {
+                }
                 return resp.version;
             });
         },
@@ -171,26 +164,16 @@
          * @returns {promise}
          */
         listKGNames: function(callback) {
-            var ret;
-            if (callback) {
-                // The user provided a callback function, so we should use it
-                ret = this.listKGs(function(resp) {
-                    // Only call the callback with a list of names
-                    callback(resp.map(function(kg) {
-                        return kg.name;
-                    }));
-                });
-            } else {
-                // No callback, just list the kgs
-                ret = this.listKGs();
-            }
-
-            // Always implement the promise if users choose to use it
-            return ret.then(function(resp) {
-                // Only return a list or names
-                return resp.map(function(kg) {
+            return this.listKGs().then(function (kgs) {
+                var ret = kgs.map(function(kg) {
                     return kg.name;
                 });
+
+                if (callback) {
+                    callback(ret);
+                }
+
+                return ret;
             });
         },
         /**
@@ -264,7 +247,8 @@
                 configObject[property] = value
             }
 
-            this.getKGConfig(kgname, function(resp) {
+            // Return a promise
+            return this.getKGConfig(kgname).then(function(resp) {
                 // Check to see if the app exists first
                 var exists = false;
                 resp.forEach(function(appconf) {
@@ -552,23 +536,22 @@
                 data.mappings = mappings;
             }
 
-            // Set the callback function - if we want to start the schedule after creation, then the callback needs to
-            // start the schedule before calling the users callback
-            var realCallback;
-            if (startAfterCreation) {
-                realCallback = function(resp) {
-                    self.startSchedule(resp.id, function(startResp) {
-                        // Callback with the original resp instead of the response of starting
+            // Return a promise
+            return this._ajax('POST', '/scheduler/schedule', data).then(function(resp) {
+                if (startAfterCreation) {
+                    return self.startSchedule(resp.id).then(function(startResp) {
                         if (callback) {
                             callback(resp);
                         }
+                        return resp;
                     });
-                };
-            } else {
-                realCallback = callback;
-            }
-
-            return this._ajax('POST', '/scheduler/schedule', data, realCallback);
+                } else {
+                    if (callback) {
+                        callback(resp);
+                    }
+                    return resp;
+                }
+            });
         },
         /**
          * Get a list of all the templates stored on the server
