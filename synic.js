@@ -218,6 +218,26 @@
         deleteKG: function(kgname, callback) {
             return this._ajax('DELETE', '/kb/'+kgname, null, callback);
         },
+        /**
+         * Get a list of all the processes associated with a KG
+         *
+         * @param {string} kgname - the KG to get processes for
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        listProcessesForKG: function(kgname, callback) {
+            return this.listProcesses().then(function(procs) {
+                var ret = procs.filter(function(proc) {
+                    return proc.kb === kgname;
+                });
+
+                if (callback) {
+                    callback(ret);
+                }
+
+                return ret;
+            });
+        },
 
         /*
          *   App Config
@@ -485,6 +505,26 @@
             return this._ajax('POST', '/process', procData, callback);
         },
         /**
+         * Re run a failed process using the same procId
+         *
+         * @param {string} procId - the failed process to re-run
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        triggerFailedProcess: function(procId, callback) {
+            var self = this;
+
+            return this.getProcess(procId).then(function(process) {
+
+                // Keep all the old config
+                var newConfig = process.invocationConfig;
+                // Add the useProcessId flag
+                newConfig.useProcessId = procId;
+
+                return self.triggerProcess(process.kb, process.application, process.processType, newConfig, callback);
+            });
+        },
+        /**
          * Get a list of all the available process types
          *
          * @param {requestCallback} [callback]
@@ -555,7 +595,7 @@
         },
         /**
          * Get a list of all the templates stored on the server
-         * 
+         *
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
@@ -564,7 +604,7 @@
         },
         /**
          * Get information about a specific template
-         * 
+         *
          * @param {string} templateName - the name of the template
          * @param {requestCallback} [callback]
          * @returns {promise}
@@ -592,7 +632,7 @@
         },
         /**
          * Get information about a specific schedule
-         * 
+         *
          * @param {string} scheduleId - the ID of the schedule
          * @param {requestCallback} [callback]
          * @returns {promise}
@@ -673,7 +713,7 @@
         },
         /**
          * Start the schedule with the given ID
-         * 
+         *
          * @param {string} scheduleId - the ID of the schedule to start
          * @param {requestCallback} [callback]
          * @returns {promise}
@@ -683,7 +723,7 @@
         },
         /**
          * Stop the schedule with the given ID
-         * 
+         *
          * @param {string} scheduleId - the ID of the schedule to stop
          * @param {requestCallback} [callback]
          * @returns {promise}
@@ -697,7 +737,7 @@
          */
         /**
          * Get the job data for the given KG and process
-         * 
+         *
          * @param {string} kgname - the KG name
          * @param {string} procId - the process ID of the job
          * @param {requestCallback} [callback]
