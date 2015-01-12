@@ -273,9 +273,7 @@
                 var exists = false;
                 resp.forEach(function(appconf) {
                     if (appconf.appName === appName) {
-                        if (member) {
-                            exists = true;
-                        }
+                        exists = true;
                     }
                 });
 
