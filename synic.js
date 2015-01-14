@@ -25,7 +25,7 @@
         }
     };
 
-    SynicClient.prototype = {
+    (SynicClient.prototype = {
         constructor: SynicClient,
 
         /**
@@ -36,19 +36,20 @@
          * @param {object} [data] - any request data (only used if it is not null or undefined)
          * @param {requestCallback} [callback] - a callback function that will be called with the response as it's single parameter
          * @returns {promise}
+         * @private
          */
-        _ajax: function(method, endpoint, data, callback) {
+        _ajax: function (method, endpoint, data, callback) {
             var ajaxData = {
                 type: method,
                 url: this.synicURL + '/synic/api' + endpoint,
                 contentType: 'application/json',
                 headers: {},
-                success: function(response, status, xhr) {
+                success: function (response, status, xhr) {
                     if (callback) {
                         callback(response);
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     if (callback) {
                         callback(new Error(xhr));
                     }
@@ -63,10 +64,37 @@
         },
 
         /**
+         * Helper method, parses the date strings that synic returns
+         *
+         * @param {string} dateString - the date string
+         * @returns {string}
+         * @private
+         */
+        _parseDate: function (dateString) {
+            if (dateString) {
+                var year = dateString.substring(0, 4);
+                var month = dateString.substring(4, 6); // Zero indexed
+                var day = dateString.substring(6, 8);
+
+                var hour = dateString.substring(9, 11);
+                var minute = dateString.substring(11, 13);
+                var second = dateString.substring(13, 15);
+
+                var milli = dateString.substring(16, 19);
+
+                var d = new Date(year, month-1, day, hour, minute, second, milli);
+
+                return month+'/'+day+'/'+year.substr(2)+' '+hour+':'+minute+':'+second;
+            } else {
+                return null;
+            }
+        },
+
+        /**
          * Change the URL if need be
          * @param {string} url - the new URL
          */
-        setURL: function(url) {
+        setURL: function (url) {
             this.synicURL = url;
         },
 
@@ -79,7 +107,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getAppInfo: function(callback) {
+        getAppInfo: function (callback) {
             return this._ajax('GET', '/app', null, callback);
         },
         /**
@@ -88,8 +116,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getVersion: function(callback) {
-            return this.getAppInfo().then(function(resp) {
+        getVersion: function (callback) {
+            return this.getAppInfo().then(function (resp) {
                 if (callback) {
                     callback(resp.version);
                 }
@@ -106,7 +134,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listDBs: function(callback) {
+        listDBs: function (callback) {
             return this._ajax('GET', '/db', null, callback);
         },
         /**
@@ -116,8 +144,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getDB: function(dbname, callback) {
-            return this._ajax('GET', '/db/'+dbname, null, callback);
+        getDB: function (dbname, callback) {
+            return this._ajax('GET', '/db/' + dbname, null, callback);
         },
 
         /*
@@ -132,7 +160,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        createKG: function(kgname, db, config, callback) {
+        createKG: function (kgname, db, config, callback) {
             if (!config) {
                 config = {};
             }
@@ -154,8 +182,23 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listKGs: function(callback) {
-            return this._ajax('GET', '/kb', null, callback);
+        listKGs: function (callback) {
+            var self = this;
+            return this._ajax('GET', '/kb').then(function (kgs) {
+                // Sort the KGs by name
+                var sorted = kgs.sort(function (a, b) {
+                    if (a.name < b.name) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
+
+                if (callback) {
+                    callback(sorted);
+                }
+                return sorted;
+            });
         },
         /**
          * Get an array of all the KG names instead of the full objects
@@ -163,9 +206,9 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listKGNames: function(callback) {
+        listKGNames: function (callback) {
             return this.listKGs().then(function (kgs) {
-                var ret = kgs.map(function(kg) {
+                var ret = kgs.map(function (kg) {
                     return kg.name;
                 });
 
@@ -183,8 +226,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getKG: function(kgname, callback) {
-            return this._ajax('GET', '/kb/'+kgname, null, callback);
+        getKG: function (kgname, callback) {
+            return this._ajax('GET', '/kb/' + kgname, null, callback);
         },
         /**
          * Get the config of a specifig KG
@@ -193,8 +236,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getKGConfig: function(kgname, callback) {
-            return this._ajax('GET', '/kb/'+kgname+'/config', null, callback);
+        getKGConfig: function (kgname, callback) {
+            return this._ajax('GET', '/kb/' + kgname + '/config', null, callback);
         },
         /**
          * Update the config for a KG.  FOR ADVANCED USERS ONLY.  This requires a large config object with a
@@ -205,8 +248,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        updateKGConfig: function(kgname, config, callback) {
-            return this._ajax('PUT', '/kb/'+kgname+'/config', config, callback);
+        updateKGConfig: function (kgname, config, callback) {
+            return this._ajax('PUT', '/kb/' + kgname + '/config', config, callback);
         },
         /**
          * Delete a KG
@@ -215,8 +258,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        deleteKG: function(kgname, callback) {
-            return this._ajax('DELETE', '/kb/'+kgname, null, callback);
+        deleteKG: function (kgname, callback) {
+            return this._ajax('DELETE', '/kb/' + kgname, null, callback);
         },
         /**
          * Get a list of all the processes associated with a KG
@@ -225,9 +268,9 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listProcessesForKG: function(kgname, callback) {
-            return this.listProcesses().then(function(procs) {
-                var ret = procs.filter(function(proc) {
+        listProcessesForKG: function (kgname, callback) {
+            return this.listProcesses().then(function (procs) {
+                var ret = procs.filter(function (proc) {
                     return proc.kb === kgname;
                 });
 
@@ -253,7 +296,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        configKG: function(kgname, appName, member, property, value, callback) {
+        configKG: function (kgname, appName, member, property, value, callback) {
             var self = this;
             // Build the config object, will either be universal or members
             var configObject = {};
@@ -268,10 +311,10 @@
             }
 
             // Return a promise
-            return this.getKGConfig(kgname).then(function(resp) {
+            return this.getKGConfig(kgname).then(function (resp) {
                 // Check to see if the app exists first
                 var exists = false;
-                resp.forEach(function(appconf) {
+                resp.forEach(function (appconf) {
                     if (appconf.appName === appName) {
                         exists = true;
                     }
@@ -296,7 +339,7 @@
                     } else {
                         configData.universal = configObject;
                     }
-                    return self._ajax('PATCH', '/kb/'+kgname+'/config/'+appName, configData, callback);
+                    return self._ajax('PATCH', '/kb/' + kgname + '/config/' + appName, configData, callback);
                 }
             });
         },
@@ -311,7 +354,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        addKGAppConfig: function(kgname, appName, members, universal, callback) {
+        addKGAppConfig: function (kgname, appName, members, universal, callback) {
             if (!members) {
                 members = {};
             }
@@ -326,7 +369,7 @@
                 universal: universal
             };
 
-            return this._ajax('POST', '/kb/'+kgname+'/config', configData, callback);
+            return this._ajax('POST', '/kb/' + kgname + '/config', configData, callback);
         },
         /**
          * Adds an empty configuration object for an app on a KG
@@ -336,7 +379,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        addEmptyKGAppConfig: function(kgname, appName, callback) {
+        addEmptyKGAppConfig: function (kgname, appName, callback) {
             return this.addKGAppConfig(kgname, appName, {}, {}, callback);
         },
         /**
@@ -347,8 +390,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getKGAppConfig: function(kgname, appName, callback) {
-            return this._ajax('GET', '/kb/'+kgname+'/config/'+appName, null, callback);
+        getKGAppConfig: function (kgname, appName, callback) {
+            return this._ajax('GET', '/kb/' + kgname + '/config/' + appName, null, callback);
         },
         /**
          * Delete all configuration information for an app
@@ -358,8 +401,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        deleteKGAppConfig: function(kgname, appName, callback) {
-            return this._ajax('DELETE', '/kb/'+kgname+'/config/'+appName, null, callback);
+        deleteKGAppConfig: function (kgname, appName, callback) {
+            return this._ajax('DELETE', '/kb/' + kgname + '/config/' + appName, null, callback);
         },
         /**
          * Update the universal config on an app.  This does a PUT, so it completely replaces any config on the server
@@ -371,8 +414,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        updateKGAppUniversalConfig: function(kgname, appName, config, callback) {
-            return this._ajax('PUT', '/kb/'+kgname+'/config/'+appName+'/universal', config, callback);
+        updateKGAppUniversalConfig: function (kgname, appName, config, callback) {
+            return this._ajax('PUT', '/kb/' + kgname + '/config/' + appName + '/universal', config, callback);
         },
         /**
          * Add a NEW member to an app on a KG
@@ -384,7 +427,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        addKGAppMember: function(kgname, appName, memberName, config, callback) {
+        addKGAppMember: function (kgname, appName, memberName, config, callback) {
             if (!config) {
                 config = {};
             }
@@ -394,7 +437,7 @@
                 config: config
             };
 
-            return this._ajax('POST', '/kb/'+kgname+'/config/'+appName+'/members', configData, callback);
+            return this._ajax('POST', '/kb/' + kgname + '/config/' + appName + '/members', configData, callback);
         },
         /**
          * Update the member config on an app.  This does a PUT, so it completely replaces any config on the server
@@ -407,8 +450,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        updateKGAppMember: function(kgname, appName, memberName, config, callback) {
-            return this._ajax('PUT', '/kb/'+kgname+'/config/'+appName+'/members/'+memberName+'/config', config, callback);
+        updateKGAppMember: function (kgname, appName, memberName, config, callback) {
+            return this._ajax('PUT', '/kb/' + kgname + '/config/' + appName + '/members/' + memberName + '/config', config, callback);
         },
         /**
          * Delete all of the config info for the given member of an app
@@ -419,8 +462,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        deleteKGAppMember: function(kgname, appName, memberName, callback) {
-            return this._ajax('DELETE', '/kb/'+kgname+'/config/'+appName+'/members/'+memberName, null, callback);
+        deleteKGAppMember: function (kgname, appName, memberName, callback) {
+            return this._ajax('DELETE', '/kb/' + kgname + '/config/' + appName + '/members/' + memberName, null, callback);
         },
 
         /*
@@ -432,15 +475,22 @@
          * @param [callback]
          * @returns {promise}
          */
-        listProcesses: function(callback) {
-            return this._ajax('GET', '/process').then(function(processes) {
+        listProcesses: function (callback) {
+            var self = this;
+            return this._ajax('GET', '/process').then(function (processes) {
                 // Sort the processes by time requested
-                var sorted = processes.sort(function(a, b) {
+                var sorted = processes.sort(function (a, b) {
                     if (a.requestedTime < b.requestedTime) {
                         return -1;
                     } else {
                         return 1;
                     }
+                });
+
+                sorted.forEach(function (proc) {
+                    proc.requestedTime = self._parseDate(proc.requestedTime);
+                    proc.startedTime = self._parseDate(proc.startedTime);
+                    proc.completedTime = self._parseDate(proc.completedTime);
                 });
 
                 if (callback) {
@@ -455,9 +505,9 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listProcessIDs: function(callback) {
-            return this.listProcesses().then(function(processes) {
-                var ids = processes.map(function(proc) {
+        listProcessIDs: function (callback) {
+            return this.listProcesses().then(function (processes) {
+                var ids = processes.map(function (proc) {
                     return proc.id;
                 });
 
@@ -475,8 +525,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getProcess: function(procId, callback) {
-            return this._ajax('GET', '/process/'+procid, null, callback);
+        getProcess: function (procId, callback) {
+            return this._ajax('GET', '/process/' + procid, null, callback);
         },
         /**
          * Trigger a process to start it
@@ -488,7 +538,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        triggerProcess: function(kgname, appName, processType, config, callback) {
+        triggerProcess: function (kgname, appName, processType, config, callback) {
             if (!config) {
                 config = {};
             }
@@ -509,10 +559,10 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        triggerFailedProcess: function(procId, callback) {
+        triggerFailedProcess: function (procId, callback) {
             var self = this;
 
-            return this.getProcess(procId).then(function(process) {
+            return this.getProcess(procId).then(function (process) {
 
                 // Keep all the old config
                 var newConfig = process.invocationConfig;
@@ -528,7 +578,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listProcessTypes: function(callback) {
+        listProcessTypes: function (callback) {
             return this._ajax('GET', '/processType', null, callback);
         },
 
@@ -541,7 +591,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listSchedules: function(callback) {
+        listSchedules: function (callback) {
             return this._ajax('GET', '/scheduler/schedule', null, callback);
         },
         /**
@@ -551,7 +601,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        createSchedule: function(schedule, callback) {
+        createSchedule: function (schedule, callback) {
             return this._ajax('POST', '/scheduler/schedule', schedule, callback);
         },
         /**
@@ -564,7 +614,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        createScheduleFromTemplate: function(templateName, mappings, startAfterCreation, callback) {
+        createScheduleFromTemplate: function (templateName, mappings, startAfterCreation, callback) {
             var self = this;
 
             var data = {
@@ -575,9 +625,9 @@
             }
 
             // Return a promise
-            return this._ajax('POST', '/scheduler/schedule', data).then(function(resp) {
+            return this._ajax('POST', '/scheduler/schedule', data).then(function (resp) {
                 if (startAfterCreation) {
-                    return self.startSchedule(resp.id).then(function(startResp) {
+                    return self.startSchedule(resp.id).then(function (startResp) {
                         if (callback) {
                             callback(resp);
                         }
@@ -597,7 +647,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listTemplates: function(callback) {
+        listTemplates: function (callback) {
             return this._ajax('GET', '/scheduler/template', null, callback);
         },
         /**
@@ -607,8 +657,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getTemplate: function(templateName, callback) {
-            return this._ajax('GET', '/scheduler/template/'+templateName, null, callback);
+        getTemplate: function (templateName, callback) {
+            return this._ajax('GET', '/scheduler/template/' + templateName, null, callback);
         },
         /**
          * Get the mappings for a template - useful to know what mappings you need to provide for the schedule to work
@@ -617,8 +667,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getTemplateMappings: function(templateName, callback) {
-            return this.getTemplate(templateName).then(function(template) {
+        getTemplateMappings: function (templateName, callback) {
+            return this.getTemplate(templateName).then(function (template) {
                 var mappings = template.mappings;
 
                 if (callback) {
@@ -635,8 +685,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getSchedule: function(scheduleId, callback) {
-            return this._ajax('GET', '/scheduler/schedule/'+scheduleId, null, callback);
+        getSchedule: function (scheduleId, callback) {
+            return this._ajax('GET', '/scheduler/schedule/' + scheduleId, null, callback);
         },
         /**
          * Get a list of all the processes associated with the given schedule
@@ -645,10 +695,10 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listProcessesForSchedule: function(scheduleId, callback) {
+        listProcessesForSchedule: function (scheduleId, callback) {
             var self = this;
             // Get the schedule first, then do some process-ing
-            return this.getSchedule(scheduleId).then(function(schedule) {
+            return this.getSchedule(scheduleId).then(function (schedule) {
                 var procIDs = [];
 
                 var resources = schedule.resources;
@@ -683,8 +733,8 @@
                 }
 
                 // Get the info for the appropriate process IDs
-                return self.listProcesses().then(function(processes) {
-                    var filtered = processes.filter(function(process) {
+                return self.listProcesses().then(function (processes) {
+                    var filtered = processes.filter(function (process) {
                         return procIDs.indexOf(process.id) !== -1;
                     });
 
@@ -703,11 +753,11 @@
          * @param {requestCallback} [callback] - the callback function
          * @returns {promise}
          */
-        updateScheduleMappings: function(scheduleId, mappings, callback) {
+        updateScheduleMappings: function (scheduleId, mappings, callback) {
             var updateData = {
                 mappings: mappings
             };
-            return this._ajax('PATCH', '/scheduler/schedule/'+scheduleId, updateData, callback);
+            return this._ajax('PATCH', '/scheduler/schedule/' + scheduleId, updateData, callback);
         },
         /**
          * Start the schedule with the given ID
@@ -716,8 +766,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        startSchedule: function(scheduleId, callback) {
-            return this._ajax('PATCH', '/scheduler/schedule/'+scheduleId, {status: 'STARTING'}, callback);
+        startSchedule: function (scheduleId, callback) {
+            return this._ajax('PATCH', '/scheduler/schedule/' + scheduleId, {status: 'STARTING'}, callback);
         },
         /**
          * Stop the schedule with the given ID
@@ -726,8 +776,8 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        stopSchedule: function(scheduleId, callback) {
-            return this._ajax('PATCH', '/scheduler/schedule/'+scheduleId, {status: 'STOPPING'}, callback);
+        stopSchedule: function (scheduleId, callback) {
+            return this._ajax('PATCH', '/scheduler/schedule/' + scheduleId, {status: 'STOPPING'}, callback);
         },
 
         /*
@@ -741,11 +791,11 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getJobData: function(kgname, procId, callback) {
-            return this._ajax('GET', '/jobdata/'+kgname+'/'+procId, null, callback);
+        getJobData: function (kgname, procId, callback) {
+            return this._ajax('GET', '/jobdata/' + kgname + '/' + procId, null, callback);
         }
 
-    };
+    });
 
     // Expose SynicClient to the global object
     window.SynicClient = SynicClient;
