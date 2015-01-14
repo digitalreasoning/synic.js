@@ -526,7 +526,19 @@
          * @returns {promise}
          */
         getProcess: function (procId, callback) {
-            return this._ajax('GET', '/process/' + procid, null, callback);
+            var self = this;
+
+            return this._ajax('GET', '/process/' + procId).then(function (proc) {
+                proc.requestedTime = self._parseDate(proc.requestedTime);
+                proc.startedTime = self._parseDate(proc.startedTime);
+                proc.completedTime = self._parseDate(proc.completedTime);
+
+                if (callback) {
+                    callback(proc);
+                }
+
+                return proc;
+            });
         },
         /**
          * Trigger a process to start it
@@ -703,6 +715,19 @@
 
                 var resources = schedule.resources;
 
+                /*
+                    The resources object looks like this:
+                    {
+                        "kbName": "/kb/$kbName",
+                        "rivulet": "/process/$rivuletId",
+                        "frequencies": "/process/$frequenciesId",
+                        ...
+                    }
+
+                    We only want the processes, so we'll look for resource values that start with '/process', then grab
+                    the procId from the mappings dict. (the $ implies that the value should be pulled from the mappings)
+                 */
+
                 // Find all the process IDs first
                 for (var resource in resources) {
                     if (resources.hasOwnProperty(resource)) {
@@ -725,7 +750,7 @@
                                     procIDs.push(mappings[mappingId]);
                                 }
                             } else {
-                                // This is a plan procID already, add it to the list
+                                // This is a plain procID already, add it to the list
                                 procIDs.push(mappingId);
                             }
                         }
