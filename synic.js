@@ -25,7 +25,7 @@
         }
     };
 
-    (SynicClient.prototype = {
+    SynicClient.prototype = {
         constructor: SynicClient,
 
         /**
@@ -82,9 +82,9 @@
 
                 var milli = dateString.substring(16, 19);
 
-                var d = new Date(year, month-1, day, hour, minute, second, milli);
+                var d = new Date(year, month - 1, day, hour, minute, second, milli);
 
-                return month+'/'+day+'/'+year.substr(2)+' '+hour+':'+minute+':'+second;
+                return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
             } else {
                 return null;
             }
@@ -585,6 +585,16 @@
             });
         },
         /**
+         * Kill the process with the specified procId
+         *
+         * @param {string} procId - the process ID to kill
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        killProcess: function (procId, callback) {
+            return this._ajax('PATCH', '/process/' + procId, {"issuedCommand": "CANCEL"}, callback);
+        },
+        /**
          * Get a list of all the available process types
          *
          * @param {requestCallback} [callback]
@@ -630,7 +640,7 @@
             var self = this;
 
             var data = {
-                templateName: templateName,
+                templateName: templateName
             };
             if (mappings) {
                 data.mappings = mappings;
@@ -714,18 +724,17 @@
                 var procIDs = [];
 
                 var resources = schedule.resources;
-
                 /*
-                    The resources object looks like this:
-                    {
-                        "kbName": "/kb/$kbName",
-                        "rivulet": "/process/$rivuletId",
-                        "frequencies": "/process/$frequenciesId",
-                        ...
-                    }
+                 The resources object looks like this:
+                 {
+                 "kbName": "/kb/$kbName",
+                 "rivulet": "/process/$rivuletId",
+                 "frequencies": "/process/$frequenciesId",
+                 ...
+                 }
 
-                    We only want the processes, so we'll look for resource values that start with '/process', then grab
-                    the procId from the mappings dict. (the $ implies that the value should be pulled from the mappings)
+                 We only want the processes, so we'll look for resource values that start with '/process', then grab
+                 the procId from the mappings dict. (the $ implies that the value should be pulled from the mappings)
                  */
 
                 // Find all the process IDs first
@@ -820,7 +829,7 @@
             return this._ajax('GET', '/jobdata/' + kgname + '/' + procId, null, callback);
         }
 
-    });
+    };
 
     // Expose SynicClient to the global object
     window.SynicClient = SynicClient;
