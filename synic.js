@@ -614,7 +614,26 @@
          * @returns {promise}
          */
         listSchedules: function (callback) {
-            return this._ajax('GET', '/scheduler/schedule', null, callback);
+            var self = this;
+
+            return this._ajax('GET', '/scheduler/schedule').then(function (schedules) {
+                return self.listProcesses().then(function (processes) {
+
+                    schedules.forEach(function (schedule) {
+                        var procIDs = self._listProcessIdsForSchedule(schedule);
+
+                        schedule.processes = processes.filter(function (process) {
+                            return procIDs.indexOf(process.id) !== -1;
+                        });
+                    });
+
+                    if (callback) {
+                        callback(schedules);
+                    }
+
+                    return schedules;
+                });
+            });
         },
         /**
          * Create a schedule.  ADVANCED USERS ONLY.  The schedule object has a very specific structure.
@@ -711,6 +730,61 @@
             return this._ajax('GET', '/scheduler/schedule/' + scheduleId, null, callback);
         },
         /**
+         * Get all the process IDs associated with a schedule.
+         *
+         * @param {Object} schedule - the schedule object ALREADY FETCHED FROM THE SERVER
+         * @returns {Array}
+         * @private
+         */
+        _listProcessIdsForSchedule: function (schedule) {
+            var procIDs = [];
+
+            var resources = schedule.resources;
+            /*
+             The resources object looks like this:
+             {
+             "kbName": "/kb/$kbName",
+             "rivulet": "/process/$rivuletId",
+             "frequencies": "/process/$frequenciesId",
+             ...
+             }
+
+             We only want the processes, so we'll look for resource values that start with '/process', then grab
+             the procId from the mappings dict. (the $ implies that the value should be pulled from the mappings)
+             */
+
+            // Find all the process IDs first
+            for (var resource in resources) {
+                if (resources.hasOwnProperty(resource)) {
+                    // Check to see if this resource is a process
+                    var resourceUri = resources[resource];
+                    if (resourceUri.indexOf("/process") === 0) {
+                        // We found a process!!
+                        // Now we need to figure out if it's a real procID or if it's a mapping variable
+                        var mappingId = resourceUri.split('/')[2];
+                        if (mappingId.indexOf('$') === 0) {
+                            // This references a mapping variable
+                            // pick off the '$'
+                            mappingId = mappingId.substring(1);
+                            var mappings = schedule.mappings;
+
+                            // Need to check that the mapping exists - being in the resources list doesn't
+                            // guarantee that the process has started yet
+                            if (mappings.hasOwnProperty(mappingId)) {
+                                // Finally found the ID, phew
+                                procIDs.push(mappings[mappingId]);
+                            }
+                        } else {
+                            // This is a plain procID already, add it to the list
+                            procIDs.push(mappingId);
+                        }
+                    }
+                }
+            }
+
+            return procIDs;
+        },
+        /**
          * Get a list of all the processes associated with the given schedule
          *
          * @param {string} scheduleId - the schedule ID
@@ -721,50 +795,7 @@
             var self = this;
             // Get the schedule first, then do some process-ing
             return this.getSchedule(scheduleId).then(function (schedule) {
-                var procIDs = [];
-
-                var resources = schedule.resources;
-                /*
-                 The resources object looks like this:
-                 {
-                 "kbName": "/kb/$kbName",
-                 "rivulet": "/process/$rivuletId",
-                 "frequencies": "/process/$frequenciesId",
-                 ...
-                 }
-
-                 We only want the processes, so we'll look for resource values that start with '/process', then grab
-                 the procId from the mappings dict. (the $ implies that the value should be pulled from the mappings)
-                 */
-
-                // Find all the process IDs first
-                for (var resource in resources) {
-                    if (resources.hasOwnProperty(resource)) {
-                        // Check to see if this resource is a process
-                        var resourceUri = resources[resource];
-                        if (resourceUri.indexOf("/process") === 0) {
-                            // We found a process!!
-                            // Now we need to figure out if it's a real procID or if it's a mapping variable
-                            var mappingId = resourceUri.split('/')[2];
-                            if (mappingId.indexOf('$') === 0) {
-                                // This references a mapping variable
-                                // pick off the '$'
-                                mappingId = mappingId.substring(1);
-                                var mappings = schedule.mappings;
-
-                                // Need to check that the mapping exists - being in the resources list doesn't
-                                // guarantee that the process has started yet
-                                if (mappings.hasOwnProperty(mappingId)) {
-                                    // Finally found the ID, phew
-                                    procIDs.push(mappings[mappingId]);
-                                }
-                            } else {
-                                // This is a plain procID already, add it to the list
-                                procIDs.push(mappingId);
-                            }
-                        }
-                    }
-                }
+                var procIDs = self._listProcessIdsForSchedule(schedule);
 
                 // Get the info for the appropriate process IDs
                 return self.listProcesses().then(function (processes) {
