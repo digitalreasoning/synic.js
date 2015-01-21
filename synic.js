@@ -627,6 +627,20 @@
                         });
                     });
 
+                    // Sort by the start time of the first process
+                    schedules.sort(function (a, b) {
+                        // If there's no processes loaded yet, 
+                        if (a.processes.length === 0) {
+                            return 1;
+                        } else if (b.processes.length === 0) {
+                            return -1;
+                        } else if (a.processes[0].startedTime < b.processes[0].startedTime) {
+                            return -1;
+                        } else {
+                            return 1;
+                        }
+                    });
+
                     if (callback) {
                         callback(schedules);
                     }
