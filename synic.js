@@ -184,20 +184,30 @@
          */
         listKGs: function (callback) {
             var self = this;
-            return this._ajax('GET', '/kb').then(function (kgs) {
-                // Sort the KGs by name
-                var sorted = kgs.sort(function (a, b) {
-                    if (a.name < b.name) {
-                        return -1;
-                    } else {
-                        return 1;
-                    }
-                });
 
-                if (callback) {
-                    callback(sorted);
-                }
-                return sorted;
+            return this._ajax('GET', '/kb').then(function (kgs) {
+                return self.listProcesses().then(function (processes) {
+                    // Attach all the processes for each KG
+                    kgs.forEach(function (kg) {
+                        kg.processes = processes.filter(function (proc) {
+                            return proc.kb === kg.name;
+                        });
+                    });
+
+                    // Sort the KGs by name
+                    var sorted = kgs.sort(function (a, b) {
+                        if (a.name < b.name) {
+                            return -1;
+                        } else {
+                            return 1;
+                        }
+                    });
+
+                    if (callback) {
+                        callback(sorted);
+                    }
+                    return sorted;
+                });
             });
         },
         /**
@@ -268,19 +278,19 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listProcessesForKG: function (kgname, callback) {
-            return this.listProcesses().then(function (procs) {
-                var ret = procs.filter(function (proc) {
-                    return proc.kb === kgname;
-                });
-
-                if (callback) {
-                    callback(ret);
-                }
-
-                return ret;
-            });
-        },
+        //listProcessesForKG: function (kgname, callback) {
+        //    return this.listProcesses().then(function (procs) {
+        //        var ret = procs.filter(function (proc) {
+        //            return proc.kb === kgname;
+        //        });
+        //
+        //        if (callback) {
+        //            callback(ret);
+        //        }
+        //
+        //        return ret;
+        //    });
+        //},
 
         /*
          *   App Config
@@ -629,7 +639,7 @@
 
                     // Sort by the start time of the first process
                     schedules.sort(function (a, b) {
-                        // If there's no processes loaded yet, 
+                        // If there's no processes loaded yet,
                         if (a.processes.length === 0) {
                             return 1;
                         } else if (b.processes.length === 0) {
