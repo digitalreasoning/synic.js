@@ -536,6 +536,12 @@
                     proc.requestedTime = self._parseDate(proc.requestedTime);
                     proc.startedTime = self._parseDate(proc.startedTime);
                     proc.completedTime = self._parseDate(proc.completedTime);
+                    if (proc.steps) {
+                        proc.steps.forEach(function (step) {
+                            step.startTime = self._parseDate(step.startTime);
+                            step.endTime = self._parseDate(step.endTime);
+                        });
+                    }
                 });
 
                 if (callback) {
@@ -577,6 +583,13 @@
                 proc.requestedTime = self._parseDate(proc.requestedTime);
                 proc.startedTime = self._parseDate(proc.startedTime);
                 proc.completedTime = self._parseDate(proc.completedTime);
+
+                if (proc.steps) {
+                    proc.steps.forEach(function (step) {
+                        step.startTime = self._parseDate(step.startTime);
+                        step.endTime = self._parseDate(step.endTime);
+                    });
+                }
 
                 if (callback) {
                     callback(proc);
