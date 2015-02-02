@@ -475,6 +475,41 @@
         deleteKGAppMember: function (kgname, appName, memberName, callback) {
             return this._ajax('DELETE', '/kb/' + kgname + '/config/' + appName + '/members/' + memberName, null, callback);
         },
+        /**
+         * Get the global config object for a KG
+         *
+         * @param {string} kgname - the KG to configure
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        getKGGlobalConfig: function (kgname, callback) {
+            return this._ajax('GET', '/kb/' + kgname + '/globalConfig', null, callback);
+        },
+        /**
+         * Add a single property/value pair the the global config object
+         *
+         * @param {string} kgname - the KG to configure
+         * @param {string} propName - the property to add
+         * @param {string} value - the value associated with the property
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        addKGGlobalProperty: function (kgname, propName, value, callback) {
+            var config = {};
+            config[propName] = value;
+            return this._ajax('PATCH', '/kb/' + kgname + '/globalConfig', config, callback);
+        },
+        /**
+         * Update the whole global config object
+         *
+         * @param {string} kgname - the KG to configure
+         * @param {object} config - the new config object
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        updateKGGlobalConfig: function (kgname, config, callback) {
+            return this._ajax('PUT', '/kb/' + kgname + '/globalConfig', config, callback);
+        },
 
         /*
          *   Processes
