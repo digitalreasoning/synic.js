@@ -145,7 +145,7 @@
          * @returns {promise}
          */
         getDB: function (dbname, callback) {
-            return this._ajax('GET', '/db/' + dbname, null, callback);
+            return this._ajax('GET', '/db/' + encodeURIComponent(dbname), null, callback);
         },
 
         /*
@@ -237,7 +237,7 @@
          * @returns {promise}
          */
         getKG: function (kgname, callback) {
-            return this._ajax('GET', '/kb/' + kgname, null, callback);
+            return this._ajax('GET', '/kb/' + encodeURIComponent(kgname), null, callback);
         },
         /**
          * Get the config of a specifig KG
@@ -247,7 +247,7 @@
          * @returns {promise}
          */
         getKGConfig: function (kgname, callback) {
-            return this._ajax('GET', '/kb/' + kgname + '/config', null, callback);
+            return this._ajax('GET', '/kb/' + encodeURIComponent(kgname) + '/config', null, callback);
         },
         /**
          * Update the config for a KG.  FOR ADVANCED USERS ONLY.  This requires a large config object with a
@@ -259,7 +259,7 @@
          * @returns {promise}
          */
         updateKGConfig: function (kgname, config, callback) {
-            return this._ajax('PUT', '/kb/' + kgname + '/config', config, callback);
+            return this._ajax('PUT', '/kb/' + encodeURIComponent(kgname) + '/config', config, callback);
         },
         /**
          * Delete a KG
@@ -269,7 +269,7 @@
          * @returns {promise}
          */
         deleteKG: function (kgname, callback) {
-            return this._ajax('DELETE', '/kb/' + kgname, null, callback);
+            return this._ajax('DELETE', '/kb/' + encodeURIComponent(kgname), null, callback);
         },
         /**
          * Get a list of all the processes associated with a KG
@@ -349,7 +349,7 @@
                     } else {
                         configData.universal = configObject;
                     }
-                    return self._ajax('PATCH', '/kb/' + kgname + '/config/' + appName, configData, callback);
+                    return self._ajax('PATCH', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName), configData, callback);
                 }
             });
         },
@@ -379,7 +379,7 @@
                 universal: universal
             };
 
-            return this._ajax('POST', '/kb/' + kgname + '/config', configData, callback);
+            return this._ajax('POST', '/kb/' + encodeURIComponent(kgname) + '/config', configData, callback);
         },
         /**
          * Adds an empty configuration object for an app on a KG
@@ -401,7 +401,7 @@
          * @returns {promise}
          */
         getKGAppConfig: function (kgname, appName, callback) {
-            return this._ajax('GET', '/kb/' + kgname + '/config/' + appName, null, callback);
+            return this._ajax('GET', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName), null, callback);
         },
         /**
          * Delete all configuration information for an app
@@ -412,7 +412,7 @@
          * @returns {promise}
          */
         deleteKGAppConfig: function (kgname, appName, callback) {
-            return this._ajax('DELETE', '/kb/' + kgname + '/config/' + appName, null, callback);
+            return this._ajax('DELETE', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName), null, callback);
         },
         /**
          * Update the universal config on an app.  This does a PUT, so it completely replaces any config on the server
@@ -425,7 +425,7 @@
          * @returns {promise}
          */
         updateKGAppUniversalConfig: function (kgname, appName, config, callback) {
-            return this._ajax('PUT', '/kb/' + kgname + '/config/' + appName + '/universal', config, callback);
+            return this._ajax('PUT', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName) + '/universal', config, callback);
         },
         /**
          * Add a NEW member to an app on a KG
@@ -447,7 +447,7 @@
                 config: config
             };
 
-            return this._ajax('POST', '/kb/' + kgname + '/config/' + appName + '/members', configData, callback);
+            return this._ajax('POST', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName) + '/members', configData, callback);
         },
         /**
          * Update the member config on an app.  This does a PUT, so it completely replaces any config on the server
@@ -461,7 +461,7 @@
          * @returns {promise}
          */
         updateKGAppMember: function (kgname, appName, memberName, config, callback) {
-            return this._ajax('PUT', '/kb/' + kgname + '/config/' + appName + '/members/' + memberName + '/config', config, callback);
+            return this._ajax('PUT', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName) + '/members/' + encodeURIComponent(memberName) + '/config', config, callback);
         },
         /**
          * Delete all of the config info for the given member of an app
@@ -473,7 +473,7 @@
          * @returns {promise}
          */
         deleteKGAppMember: function (kgname, appName, memberName, callback) {
-            return this._ajax('DELETE', '/kb/' + kgname + '/config/' + appName + '/members/' + memberName, null, callback);
+            return this._ajax('DELETE', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName) + '/members/' + encodeURIComponent(memberName), null, callback);
         },
         /**
          * Get the global config object for a KG
@@ -483,7 +483,7 @@
          * @returns {promise}
          */
         getKGGlobalConfig: function (kgname, callback) {
-            return this._ajax('GET', '/kb/' + kgname + '/globalConfig', null, callback);
+            return this._ajax('GET', '/kb/' + encodeURIComponent(kgname) + '/globalConfig', null, callback);
         },
         /**
          * Add a single property/value pair the the global config object
@@ -497,7 +497,7 @@
         addKGGlobalProperty: function (kgname, propName, value, callback) {
             var config = {};
             config[propName] = value;
-            return this._ajax('PATCH', '/kb/' + kgname + '/globalConfig', config, callback);
+            return this._ajax('PATCH', '/kb/' + encodeURIComponent(kgname) + '/globalConfig', config, callback);
         },
         /**
          * Update the whole global config object
@@ -508,7 +508,7 @@
          * @returns {promise}
          */
         updateKGGlobalConfig: function (kgname, config, callback) {
-            return this._ajax('PUT', '/kb/' + kgname + '/globalConfig', config, callback);
+            return this._ajax('PUT', '/kb/' + encodeURIComponent(kgname) + '/globalConfig', config, callback);
         },
 
         /*
@@ -579,7 +579,7 @@
         getProcess: function (procId, callback) {
             var self = this;
 
-            return this._ajax('GET', '/process/' + procId).then(function (proc) {
+            return this._ajax('GET', '/process/' + encodeURIComponent(procId)).then(function (proc) {
                 proc.requestedTime = self._parseDate(proc.requestedTime);
                 proc.startedTime = self._parseDate(proc.startedTime);
                 proc.completedTime = self._parseDate(proc.completedTime);
@@ -650,7 +650,7 @@
          * @returns {promise}
          */
         killProcess: function (procId, callback) {
-            return this._ajax('PATCH', '/process/' + procId, {"issuedCommand": "CANCEL"}, callback);
+            return this._ajax('PATCH', '/process/' + encodeURIComponent(procId), {"issuedCommand": "CANCEL"}, callback);
         },
         /**
          * Get a list of all the available process types
@@ -771,7 +771,7 @@
          * @returns {promise}
          */
         getTemplate: function (templateName, callback) {
-            return this._ajax('GET', '/scheduler/template/' + templateName, null, callback);
+            return this._ajax('GET', '/scheduler/template/' + encodeURIComponent(templateName), null, callback);
         },
         /**
          * Get the mappings for a template - useful to know what mappings you need to provide for the schedule to work
@@ -799,7 +799,7 @@
          * @returns {promise}
          */
         getSchedule: function (scheduleId, callback) {
-            return this._ajax('GET', '/scheduler/schedule/' + scheduleId, null, callback);
+            return this._ajax('GET', '/scheduler/schedule/' + encodeURIComponent(scheduleId), null, callback);
         },
         /**
          * Get all the process IDs associated with a schedule.
@@ -894,7 +894,7 @@
             var updateData = {
                 mappings: mappings
             };
-            return this._ajax('PATCH', '/scheduler/schedule/' + scheduleId, updateData, callback);
+            return this._ajax('PATCH', '/scheduler/schedule/' + encodeURIComponent(scheduleId), updateData, callback);
         },
         /**
          * Start the schedule with the given ID
@@ -904,7 +904,7 @@
          * @returns {promise}
          */
         startSchedule: function (scheduleId, callback) {
-            return this._ajax('PATCH', '/scheduler/schedule/' + scheduleId, {status: 'STARTING'}, callback);
+            return this._ajax('PATCH', '/scheduler/schedule/' + encodeURIComponent(scheduleId), {status: 'STARTING'}, callback);
         },
         /**
          * Stop the schedule with the given ID
@@ -914,7 +914,7 @@
          * @returns {promise}
          */
         stopSchedule: function (scheduleId, callback) {
-            return this._ajax('PATCH', '/scheduler/schedule/' + scheduleId, {status: 'STOPPING'}, callback);
+            return this._ajax('PATCH', '/scheduler/schedule/' + encodeURIComponent(scheduleId), {status: 'STOPPING'}, callback);
         },
 
         /*
@@ -929,7 +929,7 @@
          * @returns {promise}
          */
         getJobData: function (kgname, procId, callback) {
-            return this._ajax('GET', '/jobdata/' + kgname + '/' + procId, null, callback);
+            return this._ajax('GET', '/jobdata/' + encodeURIComponent(kgname) + '/' + encodeURIComponent(procId), null, callback);
         }
 
     };
