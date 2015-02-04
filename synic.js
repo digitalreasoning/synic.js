@@ -102,6 +102,15 @@
          *   Synic App
          */
         /**
+         * Get the synic root endpoint
+         *
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        getRoot: function (callback) {
+            return this._ajax('GET', '/', null, callback);
+        },
+        /**
          * Get the synic server info
          *
          * @param {requestCallback} [callback]
