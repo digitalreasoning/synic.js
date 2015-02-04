@@ -3,5 +3,7 @@
 
 .idea/
 
+# bower & npm
 bower_components/
+node_modules/
 

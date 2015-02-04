@@ -1,5 +1,5 @@
 {
-  "name": "synic",
+  "name": "synic.js",
   "version": "0.1.0",
   "authors": [
     "Clark Perkins <clark.perkins@digitalreasoning.com>"
@@ -10,7 +10,7 @@
     "synic",
     "ingestion"
   ],
-  "main": "synic.js",
+  "main": "src/synic.js",
   "license": "MIT",
   "private": true,
   "ignore": [
@@ -22,5 +22,8 @@
   ],
   "dependencies": {
     "jquery": ">= 1.9.1"
+  },
+  "devDependencies": {
+    "jasmine-ajax": "~3.0.0"
   }
 }
