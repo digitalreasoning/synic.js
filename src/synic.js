@@ -244,7 +244,7 @@
          * @returns {promise}
          */
         listKGNames: function (callback) {
-            return this.listKGs().then(function (kgs) {
+            return this._ajax('GET', '/kb').then(function (kgs) {
                 var ret = kgs.map(function (kg) {
                     return kg.name;
                 });
@@ -298,26 +298,6 @@
         deleteKG: function (kgname, callback) {
             return this._ajax('DELETE', '/kb/' + encodeURIComponent(kgname), null, callback);
         },
-        /**
-         * Get a list of all the processes associated with a KG
-         *
-         * @param {string} kgname - the KG to get processes for
-         * @param {requestCallback} [callback]
-         * @returns {promise}
-         */
-        //listProcessesForKG: function (kgname, callback) {
-        //    return this.listProcesses().then(function (procs) {
-        //        var ret = procs.filter(function (proc) {
-        //            return proc.kb === kgname;
-        //        });
-        //
-        //        if (callback) {
-        //            callback(ret);
-        //        }
-        //
-        //        return ret;
-        //    });
-        //},
 
         /*
          *   App Config

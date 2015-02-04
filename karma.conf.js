@@ -18,7 +18,7 @@ module.exports = function(config) {
       'bower_components/jquery/dist/jquery.js',
       'bower_components/jasmine-ajax/lib/mock-ajax.js',
       'src/synic.js',
-      'test/*.js'
+      'test/*_spec.js'
     ],
 
 
