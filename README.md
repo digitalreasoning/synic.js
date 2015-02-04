@@ -56,3 +56,17 @@ client.listKGs(function (kglist) {
 ```
 
 Both methods work equivalently, and you may use whichever you're more comfortable with.
+
+# Testing
+
+To run all the tests, first you must have npm installed.  Then run the following:
+
+```bash
+cd $SYNIC_JS_DIR
+npm install -g bower
+npm install
+bower install
+
+# this is where the actual testing happens
+npm test
+```
