@@ -186,12 +186,12 @@
             return this._ajax('POST', '/kb', kgdata, callback);
         },
         /**
-         * Get a list of all the KGs from the server
+         * Get a list of all active KGs
          *
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listKGs: function (callback) {
+        listActiveKGs: function (callback) {
             var self = this;
 
             return this._ajax('GET', '/kb').then(function (kgs) {
@@ -218,6 +218,24 @@
                     return sorted;
                 });
             });
+        },
+        /**
+         * Get a list of all pending KGs (creating & deleting)
+         *
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        listPendingKGs: function (callback) {
+            return this._ajax('GET', '/kb/pending', null, callback);
+        },
+        /**
+         * Get a list of all the KGs from the server
+         *
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        listKGs: function (callback) {
+            return this.listActiveKGs(callback);
         },
         /**
          * Get an array of all the KG names instead of the full objects
