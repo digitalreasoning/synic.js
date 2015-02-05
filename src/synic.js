@@ -45,12 +45,12 @@
                 contentType: 'application/json',
                 headers: {},
                 success: function (response, status, xhr) {
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback(response);
                     }
                 },
                 error: function (xhr, status, error) {
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback(new Error(xhr));
                     }
                 }
@@ -127,7 +127,7 @@
          */
         getVersion: function (callback) {
             return this.getAppInfo().then(function (resp) {
-                if (callback) {
+                if (typeof callback === 'function') {
                     callback(resp.version);
                 }
                 return resp.version;
@@ -212,7 +212,7 @@
                         }
                     });
 
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback(sorted);
                     }
                     return sorted;
@@ -249,7 +249,7 @@
                     return kg.name;
                 });
 
-                if (callback) {
+                if (typeof callback === 'function') {
                     callback(ret);
                 }
 
@@ -551,7 +551,7 @@
                     }
                 });
 
-                if (callback) {
+                if (typeof callback === 'function') {
                     callback(sorted);
                 }
                 return sorted;
@@ -569,7 +569,7 @@
                     return proc.id;
                 });
 
-                if (callback) {
+                if (typeof callback === 'function') {
                     callback(ids);
                 }
 
@@ -598,7 +598,7 @@
                     });
                 }
 
-                if (callback) {
+                if (typeof callback === 'function') {
                     callback(proc);
                 }
 
@@ -706,7 +706,7 @@
                         }
                     });
 
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback(schedules);
                     }
 
@@ -748,13 +748,13 @@
             return this._ajax('POST', '/scheduler/schedule', data).then(function (resp) {
                 if (startAfterCreation) {
                     return self.startSchedule(resp.id).then(function (startResp) {
-                        if (callback) {
+                        if (typeof callback === 'function') {
                             callback(startResp);
                         }
                         return startResp;
                     });
                 } else {
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback(resp);
                     }
                     return resp;
@@ -791,7 +791,7 @@
             return this.getTemplate(templateName).then(function (template) {
                 var mappings = template.mappings;
 
-                if (callback) {
+                if (typeof callback === 'function') {
                     callback(mappings);
                 }
 
@@ -882,7 +882,7 @@
         //                return procIDs.indexOf(process.id) !== -1;
         //            });
         //
-        //            if (callback) {
+        //            if (typeof callback === 'function') {
         //                callback(filtered);
         //            }
         //            return filtered;
