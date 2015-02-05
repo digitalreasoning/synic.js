@@ -453,4 +453,34 @@ describe("Schedules", function () {
             expect((idx >= 1 && idx <= 6) || idx === 8).toBe(true);
         });
     });
+
+    it("Test getTemplateMappings", function () {
+        expect(synicClient.getTemplateMappings).toBeTruthy();
+
+        var doneFn = jasmine.createSpy("success");
+
+        synicClient.getTemplateMappings('synthesys-batch-ingestion').then(function (mappings) {
+            expect(typeof mappings).toBe('object');
+
+            for (var key in mappings) {
+                if (mappings.hasOwnProperty(key)) {
+                    expect(typeof key).toBe('string');
+                    expect(typeof mappings[key]).toBe('string');
+                }
+            }
+        }).then(doneFn);
+
+        expect(doneFn).not.toHaveBeenCalled();
+
+        var mappingsRequest = jasmine.Ajax.requests.mostRecent();
+
+        expect(mappingsRequest.url).toBe('http://localhost:9011/synic/api/scheduler/template/synthesys-batch-ingestion');
+        mappingsRequest.respondWith({
+            status: 200,
+            contentType: 'application/json',
+            responseText: JSON.stringify(schedResp[0])
+        });
+
+        expect(doneFn).toHaveBeenCalled();
+    });
 });

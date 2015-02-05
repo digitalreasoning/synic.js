@@ -94,7 +94,7 @@
          * Change the URL if need be
          * @param {string} url - the new URL
          */
-        setURL: function (url) {
+        setURL: /* istanbul ignore next */ function (url) {
             this.synicURL = url;
         },
 
@@ -107,7 +107,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getRoot: function (callback) {
+        getRoot: /* istanbul ignore next */ function (callback) {
             return this._ajax('GET', '/', null, callback);
         },
         /**
@@ -116,7 +116,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getAppInfo: function (callback) {
+        getAppInfo: /* istanbul ignore next */ function (callback) {
             return this._ajax('GET', '/app', null, callback);
         },
         /**
@@ -143,7 +143,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listDBs: function (callback) {
+        listDBs: /* istanbul ignore next */ function (callback) {
             return this._ajax('GET', '/db', null, callback);
         },
         /**
@@ -153,7 +153,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getDB: function (dbname, callback) {
+        getDB: /* istanbul ignore next */ function (dbname, callback) {
             return this._ajax('GET', '/db/' + encodeURIComponent(dbname), null, callback);
         },
 
@@ -263,7 +263,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getKG: function (kgname, callback) {
+        getKG: /* istanbul ignore next */ function (kgname, callback) {
             return this._ajax('GET', '/kb/' + encodeURIComponent(kgname), null, callback);
         },
         /**
@@ -273,7 +273,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getKGConfig: function (kgname, callback) {
+        getKGConfig: /* istanbul ignore next */ function (kgname, callback) {
             return this._ajax('GET', '/kb/' + encodeURIComponent(kgname) + '/config', null, callback);
         },
         /**
@@ -285,7 +285,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        updateKGConfig: function (kgname, config, callback) {
+        updateKGConfig: /* istanbul ignore next */ function (kgname, config, callback) {
             return this._ajax('PUT', '/kb/' + encodeURIComponent(kgname) + '/config', config, callback);
         },
         /**
@@ -295,7 +295,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        deleteKG: function (kgname, callback) {
+        deleteKG: /* istanbul ignore next */ function (kgname, callback) {
             return this._ajax('DELETE', '/kb/' + encodeURIComponent(kgname), null, callback);
         },
 
@@ -396,7 +396,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        addEmptyKGAppConfig: function (kgname, appName, callback) {
+        addEmptyKGAppConfig: /* istanbul ignore next */ function (kgname, appName, callback) {
             return this.addKGAppConfig(kgname, appName, {}, {}, callback);
         },
         /**
@@ -407,7 +407,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getKGAppConfig: function (kgname, appName, callback) {
+        getKGAppConfig: /* istanbul ignore next */ function (kgname, appName, callback) {
             return this._ajax('GET', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName), null, callback);
         },
         /**
@@ -418,7 +418,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        deleteKGAppConfig: function (kgname, appName, callback) {
+        deleteKGAppConfig: /* istanbul ignore next */ function (kgname, appName, callback) {
             return this._ajax('DELETE', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName), null, callback);
         },
         /**
@@ -431,7 +431,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        updateKGAppUniversalConfig: function (kgname, appName, config, callback) {
+        updateKGAppUniversalConfig: /* istanbul ignore next */ function (kgname, appName, config, callback) {
             return this._ajax('PUT', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName) + '/universal', config, callback);
         },
         /**
@@ -444,7 +444,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        addKGAppMember: function (kgname, appName, memberName, config, callback) {
+        addKGAppMember: /* istanbul ignore next */ function (kgname, appName, memberName, config, callback) {
             if (!config) {
                 config = {};
             }
@@ -467,7 +467,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        updateKGAppMember: function (kgname, appName, memberName, config, callback) {
+        updateKGAppMember: /* istanbul ignore next */ function (kgname, appName, memberName, config, callback) {
             return this._ajax('PUT', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName) + '/members/' + encodeURIComponent(memberName) + '/config', config, callback);
         },
         /**
@@ -479,7 +479,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        deleteKGAppMember: function (kgname, appName, memberName, callback) {
+        deleteKGAppMember: /* istanbul ignore next */ function (kgname, appName, memberName, callback) {
             return this._ajax('DELETE', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName) + '/members/' + encodeURIComponent(memberName), null, callback);
         },
         /**
@@ -489,7 +489,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getKGGlobalConfig: function (kgname, callback) {
+        getKGGlobalConfig: /* istanbul ignore next */ function (kgname, callback) {
             return this._ajax('GET', '/kb/' + encodeURIComponent(kgname) + '/globalConfig', null, callback);
         },
         /**
@@ -501,7 +501,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        addKGGlobalProperty: function (kgname, propName, value, callback) {
+        addKGGlobalProperty: /* istanbul ignore next */ function (kgname, propName, value, callback) {
             var config = {};
             config[propName] = value;
             return this._ajax('PATCH', '/kb/' + encodeURIComponent(kgname) + '/globalConfig', config, callback);
@@ -514,7 +514,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        updateKGGlobalConfig: function (kgname, config, callback) {
+        updateKGGlobalConfig: /* istanbul ignore next */ function (kgname, config, callback) {
             return this._ajax('PUT', '/kb/' + encodeURIComponent(kgname) + '/globalConfig', config, callback);
         },
 
@@ -656,7 +656,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        killProcess: function (procId, callback) {
+        killProcess: /* istanbul ignore next */ function (procId, callback) {
             return this._ajax('PATCH', '/process/' + encodeURIComponent(procId), {"issuedCommand": "CANCEL"}, callback);
         },
         /**
@@ -665,7 +665,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listProcessTypes: function (callback) {
+        listProcessTypes: /* istanbul ignore next */ function (callback) {
             return this._ajax('GET', '/processType', null, callback);
         },
 
@@ -721,7 +721,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        createSchedule: function (schedule, callback) {
+        createSchedule: /* istanbul ignore next */ function (schedule, callback) {
             return this._ajax('POST', '/scheduler/schedule', schedule, callback);
         },
         /**
@@ -767,7 +767,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listTemplates: function (callback) {
+        listTemplates: /* istanbul ignore next */ function (callback) {
             return this._ajax('GET', '/scheduler/template', null, callback);
         },
         /**
@@ -777,7 +777,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getTemplate: function (templateName, callback) {
+        getTemplate: /* istanbul ignore next */ function (templateName, callback) {
             return this._ajax('GET', '/scheduler/template/' + encodeURIComponent(templateName), null, callback);
         },
         /**
@@ -805,7 +805,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getSchedule: function (scheduleId, callback) {
+        getSchedule: /* istanbul ignore next */ function (scheduleId, callback) {
             return this._ajax('GET', '/scheduler/schedule/' + encodeURIComponent(scheduleId), null, callback);
         },
         /**
@@ -897,7 +897,7 @@
          * @param {requestCallback} [callback] - the callback function
          * @returns {promise}
          */
-        updateScheduleMappings: function (scheduleId, mappings, callback) {
+        updateScheduleMappings: /* istanbul ignore next */ function (scheduleId, mappings, callback) {
             var updateData = {
                 mappings: mappings
             };
@@ -910,7 +910,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        startSchedule: function (scheduleId, callback) {
+        startSchedule: /* istanbul ignore next */ function (scheduleId, callback) {
             return this._ajax('PATCH', '/scheduler/schedule/' + encodeURIComponent(scheduleId), {status: 'STARTING'}, callback);
         },
         /**
@@ -920,7 +920,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        stopSchedule: function (scheduleId, callback) {
+        stopSchedule: /* istanbul ignore next */ function (scheduleId, callback) {
             return this._ajax('PATCH', '/scheduler/schedule/' + encodeURIComponent(scheduleId), {status: 'STOPPING'}, callback);
         },
 
@@ -935,7 +935,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getJobData: function (kgname, procId, callback) {
+        getJobData: /* istanbul ignore next */ function (kgname, procId, callback) {
             return this._ajax('GET', '/jobdata/' + encodeURIComponent(kgname) + '/' + encodeURIComponent(procId), null, callback);
         }
 
