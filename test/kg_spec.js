@@ -9,6 +9,11 @@ describe("Knowledge Graphs", function () {
             config: {}
         },
         {
+            name: 'floop',
+            db: 'default',
+            config: {}
+        },
+        {
             name: 'clark',
             db: 'default',
             config: {}

@@ -59,6 +59,36 @@ describe("Schedules", function () {
             "status": "TERMINATED",
             "errorMessage": "",
             "errorStackTrace": ""
+        },
+        {
+            "id": "91a9d90a-6262-41f4-8054-39c2764afe01",
+            "templateName": "synthesys-batch-ingestion",
+            "mappings": {
+                "hive": "true",
+                "synicDir": "/mnt/synthesys/synic-dist-1.3.0-SNAPSHOT",
+                "DESCRIPTION": "Perform batch ingestion with all analytics; Optionally create KO entities table and hive/impala tables",
+                "hiveWarehouse": "/user/hive/warehouse",
+                "rivuletId": "71fdcfa7-0224-4be4-8d6f-501070b17dd3",
+                "script": "/mnt/synthesys/synic-dist-1.3.0-SNAPSHOT/views/defaultHiveImpala/hiveImpalaSetup.sh",
+                "id": "91a9d90a-6262-41f4-8054-39c2764afe01",
+                "processType": "oozie",
+                "kbName": "floop",
+                "input": "/user/clark.perkins/en-wiki-5k.seq",
+                "entitiesTable": "true",
+                "hiveSetupScriptExitValue": "1",
+                "impalaHost": "clark-cdh5-dn-0.dev.digitalreasoning.com"
+            },
+            "resources": {
+                "kb": "/kb/$kbName",
+                "rivulet": "/process/$rivuletId",
+                "frequencies": "/process/$frequenciesId",
+                "resonance": "/process/$resonanceId",
+                "associativenet": "/process/$associativenetId",
+                "knowledgeobjects": "/process/$knowledgeObjectsId"
+            },
+            "status": "NEW",
+            "errorMessage": "",
+            "errorStackTrace": ""
         }
     ];
 
@@ -189,6 +219,25 @@ describe("Schedules", function () {
             "failure": null,
             "invocationConfig": {
 
+            },
+            "stackTrace": null,
+            "allowedCommands": [
+                "CANCEL"
+            ],
+            "issuedCommand": null
+        },
+        {
+            "id": "71fdcfa7-0224-4be4-8d6f-501070b17dd3",
+            "kb": "floop",
+            "application": "rivulet",
+            "processType": "oozie",
+            "requestedTime": "20150205T205430.689Z",
+            "startedTime": "20150205T211152.427Z",
+            "completedTime": "20150205T213225.353Z",
+            "status": "COMPLETE",
+            "failure": null,
+            "invocationConfig": {
+                "entitiesTable": "true"
             },
             "stackTrace": null,
             "allowedCommands": [
