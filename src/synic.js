@@ -870,25 +870,25 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listProcessesForSchedule: function (scheduleId, callback) {
-            var self = this;
-            // Get the schedule first, then do some process-ing
-            return this.getSchedule(scheduleId).then(function (schedule) {
-                var procIDs = self._listProcessIdsForSchedule(schedule);
-
-                // Get the info for the appropriate process IDs
-                return self.listProcesses().then(function (processes) {
-                    var filtered = processes.filter(function (process) {
-                        return procIDs.indexOf(process.id) !== -1;
-                    });
-
-                    if (callback) {
-                        callback(filtered);
-                    }
-                    return filtered;
-                });
-            });
-        },
+        //listProcessesForSchedule: function (scheduleId, callback) {
+        //    var self = this;
+        //    // Get the schedule first, then do some process-ing
+        //    return this.getSchedule(scheduleId).then(function (schedule) {
+        //        var procIDs = self._listProcessIdsForSchedule(schedule);
+        //
+        //        // Get the info for the appropriate process IDs
+        //        return self.listProcesses().then(function (processes) {
+        //            var filtered = processes.filter(function (process) {
+        //                return procIDs.indexOf(process.id) !== -1;
+        //            });
+        //
+        //            if (callback) {
+        //                callback(filtered);
+        //            }
+        //            return filtered;
+        //        });
+        //    });
+        //},
         /**
          * In order for this to take effect, you must also change the status of the schedule (synic server limitation)
          *

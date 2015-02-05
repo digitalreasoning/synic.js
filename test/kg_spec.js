@@ -4,12 +4,12 @@ describe("Knowledge Graphs", function () {
 
     var kgResp = [
         {
-            name: 'clark',
+            name: 'clark2',
             db: 'default',
             config: {}
         },
         {
-            name: 'clark2',
+            name: 'clark',
             db: 'default',
             config: {}
         }
