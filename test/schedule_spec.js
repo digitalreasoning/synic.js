@@ -34,7 +34,7 @@ describe("Schedules", function () {
                 "associativenet": "/process/$associativenetId",
                 "knowledgeobjects": "/process/$knowledgeObjectsId"
             },
-            "status": "TERMINATED",
+            "status": "NEW",
             "errorMessage": "",
             "errorStackTrace": ""
         },
@@ -301,9 +301,107 @@ describe("Schedules", function () {
         var doneFn = jasmine.createSpy("success");
 
         synicClient.createScheduleFromTemplate('synthesys-batch-ingestion', {}, false).then(function (resp) {
-
+            expect(resp.status).toBe("NEW");
         }).then(doneFn);
 
         expect(doneFn).not.toHaveBeenCalled();
+
+        var schedCreateRequest = jasmine.Ajax.requests.mostRecent();
+
+        expect(schedCreateRequest.url).toBe('http://localhost:9011/synic/api/scheduler/schedule');
+
+        schedCreateRequest.respondWith({
+            status: 200,
+            contentType: 'application/json',
+            responseText: JSON.stringify(schedResp[0])
+        });
+
+        expect(doneFn).toHaveBeenCalled();
+    });
+
+    it("Test createScheduleFromTemplate (with start)", function () {
+        expect(synicClient.createScheduleFromTemplate).toBeTruthy();
+
+        var doneFn = jasmine.createSpy("success");
+
+        synicClient.createScheduleFromTemplate('synthesys-batch-ingestion', {}, true).then(function (resp) {
+            expect(resp.status).toBe("STARTING");
+        }).then(doneFn);
+
+        expect(doneFn).not.toHaveBeenCalled();
+
+        var schedCreateRequest = jasmine.Ajax.requests.mostRecent();
+
+        expect(schedCreateRequest.url).toBe('http://localhost:9011/synic/api/scheduler/schedule');
+
+        schedCreateRequest.respondWith({
+            status: 200,
+            contentType: 'application/json',
+            responseText: JSON.stringify(schedResp[0])
+        });
+
+        expect(doneFn).not.toHaveBeenCalled();
+
+        var schedStartRequest = jasmine.Ajax.requests.mostRecent();
+
+        expect(schedStartRequest.url).toBe('http://localhost:9011/synic/api/scheduler/schedule/'+schedResp[0].id);
+
+        schedResp[0].status = "STARTING";
+
+        schedStartRequest.respondWith({
+            status: 200,
+            contentType: 'application/json',
+            responseText: JSON.stringify(schedResp[0])
+        });
+
+        expect(doneFn).toHaveBeenCalled();
+    });
+
+    it("Test _listProcessesForSchedule", function() {
+        expect(synicClient._listProcessIdsForSchedule).toBeTruthy();
+
+        var schedule = {
+            mappings: {
+                rivuletId: 'theId1',
+                frequenciesId: 'theId2',
+                resonanceId: 'theId3',
+                associativenetId: 'theId4',
+                knowledgeobjectsId: 'theId5',
+                dianogaId: 'theId6',
+                myId: 'theId7'
+            },
+            resources: {
+                associativenet: '/process/$associativenetId',
+                rivulet: '/process/$rivuletId',
+                // This should not end up in the list
+                my: '/kb/$myId',
+                knowledgeobjects: '/process/$knowledgeobjectsId',
+                dianoga: '/process/$dianogaId',
+                resonance: '/process/$resonanceId',
+                frequencies: '/process/$frequenciesId',
+                // Plain Id, not pulled from mappings
+                hello: '/process/theId8'
+            }
+        };
+
+        var ids = synicClient._listProcessIdsForSchedule(schedule);
+
+        // Check to be sure all the ids we want were returned
+        for (var i = 1; i <= 6; ++i) {
+            // AKA we want theId{i} to be in the list
+            expect(ids.indexOf('theId'+i)).not.toBeLessThan(0);
+        }
+
+        expect(ids.indexOf('theId8')).not.toBeLessThan(0);
+
+        // Check to see nothing extra was returned
+        ids.forEach(function (id) {
+            expect(id.indexOf('theId')).toBe(0);
+
+            var idx = parseInt(id[5]);
+
+            // All IDs should be in [1, 6] or equal 8
+            expect((idx >= 1 && idx <= 6) || idx === 8).toBe(true);
+        });
     });
 });

@@ -749,9 +749,9 @@
                 if (startAfterCreation) {
                     return self.startSchedule(resp.id).then(function (startResp) {
                         if (callback) {
-                            callback(resp);
+                            callback(startResp);
                         }
-                        return resp;
+                        return startResp;
                     });
                 } else {
                     if (callback) {
