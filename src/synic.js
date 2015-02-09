@@ -3,7 +3,7 @@
  * @author: Clark Perkins <clark.perkins@digitalreasoning.com>
  * @date: 2014-12-05
  */
-(function() {
+(function(window, undefined) {
     /**
      * This is what all callback functions should look like
      *
@@ -948,10 +948,10 @@
     // Use lowercase synic here, because the filename is synic.js.  AMD module names generally mirror filenames.
     /* istanbul ignore next */
     if (typeof define === "function" && define.amd) {
-        define('synic', ['jquery'], function ($) {
+        define(['jquery'], function ($) {
             return SynicClient;
         });
     }
 
     return SynicClient;
-})();
+})(window);
