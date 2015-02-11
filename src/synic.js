@@ -945,7 +945,6 @@
     window.SynicClient = SynicClient;
 
     // Make it work with AMD things, such as require.js
-    // Use lowercase synic here, because the filename is synic.js.  AMD module names generally mirror filenames.
     /* istanbul ignore next */
     if (typeof define === "function" && define.amd) {
         define(['jquery'], function ($) {
