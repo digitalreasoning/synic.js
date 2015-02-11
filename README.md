@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/digitalreasoning/synic.js.svg?branch=master)](https://travis-ci.org/digitalreasoning/synic.js)
+[![Coverage Status](https://coveralls.io/repos/digitalreasoning/synic.js/badge.svg)](https://coveralls.io/r/digitalreasoning/synic.js)
+
 synic.js
 ========
 
@@ -56,3 +59,17 @@ client.listKGs(function (kglist) {
 ```
 
 Both methods work equivalently, and you may use whichever you're more comfortable with.
+
+# Testing
+
+To run all the tests, first you must have npm installed.  Then run the following:
+
+```bash
+cd $SYNIC_JS_DIR
+npm install -g bower
+npm install
+bower install
+
+# this is where the actual testing happens
+npm test
+```

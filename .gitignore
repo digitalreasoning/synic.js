@@ -3,5 +3,13 @@
 
 .idea/
 
+# bower & npm
 bower_components/
+node_modules/
+
+# Karma coverage reports
+coverage/
+
+# npm log
+npm-debug.log
 

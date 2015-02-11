@@ -3,7 +3,7 @@
  * @author: Clark Perkins <clark.perkins@digitalreasoning.com>
  * @date: 2014-12-05
  */
-(function() {
+(function(window, undefined) {
     /**
      * This is what all callback functions should look like
      *
@@ -45,12 +45,12 @@
                 contentType: 'application/json',
                 headers: {},
                 success: function (response, status, xhr) {
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback(response);
                     }
                 },
                 error: function (xhr, status, error) {
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback(new Error(xhr));
                     }
                 }
@@ -94,7 +94,7 @@
          * Change the URL if need be
          * @param {string} url - the new URL
          */
-        setURL: function (url) {
+        setURL: /* istanbul ignore next */ function (url) {
             this.synicURL = url;
         },
 
@@ -102,12 +102,21 @@
          *   Synic App
          */
         /**
+         * Get the synic root endpoint
+         *
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        getRoot: /* istanbul ignore next */ function (callback) {
+            return this._ajax('GET', '/', null, callback);
+        },
+        /**
          * Get the synic server info
          *
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getAppInfo: function (callback) {
+        getAppInfo: /* istanbul ignore next */ function (callback) {
             return this._ajax('GET', '/app', null, callback);
         },
         /**
@@ -118,7 +127,7 @@
          */
         getVersion: function (callback) {
             return this.getAppInfo().then(function (resp) {
-                if (callback) {
+                if (typeof callback === 'function') {
                     callback(resp.version);
                 }
                 return resp.version;
@@ -134,7 +143,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listDBs: function (callback) {
+        listDBs: /* istanbul ignore next */ function (callback) {
             return this._ajax('GET', '/db', null, callback);
         },
         /**
@@ -144,7 +153,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getDB: function (dbname, callback) {
+        getDB: /* istanbul ignore next */ function (dbname, callback) {
             return this._ajax('GET', '/db/' + encodeURIComponent(dbname), null, callback);
         },
 
@@ -177,12 +186,12 @@
             return this._ajax('POST', '/kb', kgdata, callback);
         },
         /**
-         * Get a list of all the KGs from the server
+         * Get a list of all active KGs
          *
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listKGs: function (callback) {
+        listActiveKGs: function (callback) {
             var self = this;
 
             return this._ajax('GET', '/kb').then(function (kgs) {
@@ -203,12 +212,30 @@
                         }
                     });
 
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback(sorted);
                     }
                     return sorted;
                 });
             });
+        },
+        /**
+         * Get a list of all pending KGs (creating & deleting)
+         *
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        listPendingKGs: function (callback) {
+            return this._ajax('GET', '/kb/pending', null, callback);
+        },
+        /**
+         * Get a list of all the KGs from the server
+         *
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        listKGs: function (callback) {
+            return this.listActiveKGs(callback);
         },
         /**
          * Get an array of all the KG names instead of the full objects
@@ -217,12 +244,12 @@
          * @returns {promise}
          */
         listKGNames: function (callback) {
-            return this.listKGs().then(function (kgs) {
+            return this._ajax('GET', '/kb').then(function (kgs) {
                 var ret = kgs.map(function (kg) {
                     return kg.name;
                 });
 
-                if (callback) {
+                if (typeof callback === 'function') {
                     callback(ret);
                 }
 
@@ -236,7 +263,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getKG: function (kgname, callback) {
+        getKG: /* istanbul ignore next */ function (kgname, callback) {
             return this._ajax('GET', '/kb/' + encodeURIComponent(kgname), null, callback);
         },
         /**
@@ -246,7 +273,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getKGConfig: function (kgname, callback) {
+        getKGConfig: /* istanbul ignore next */ function (kgname, callback) {
             return this._ajax('GET', '/kb/' + encodeURIComponent(kgname) + '/config', null, callback);
         },
         /**
@@ -258,7 +285,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        updateKGConfig: function (kgname, config, callback) {
+        updateKGConfig: /* istanbul ignore next */ function (kgname, config, callback) {
             return this._ajax('PUT', '/kb/' + encodeURIComponent(kgname) + '/config', config, callback);
         },
         /**
@@ -268,29 +295,9 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        deleteKG: function (kgname, callback) {
+        deleteKG: /* istanbul ignore next */ function (kgname, callback) {
             return this._ajax('DELETE', '/kb/' + encodeURIComponent(kgname), null, callback);
         },
-        /**
-         * Get a list of all the processes associated with a KG
-         *
-         * @param {string} kgname - the KG to get processes for
-         * @param {requestCallback} [callback]
-         * @returns {promise}
-         */
-        //listProcessesForKG: function (kgname, callback) {
-        //    return this.listProcesses().then(function (procs) {
-        //        var ret = procs.filter(function (proc) {
-        //            return proc.kb === kgname;
-        //        });
-        //
-        //        if (callback) {
-        //            callback(ret);
-        //        }
-        //
-        //        return ret;
-        //    });
-        //},
 
         /*
          *   App Config
@@ -389,7 +396,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        addEmptyKGAppConfig: function (kgname, appName, callback) {
+        addEmptyKGAppConfig: /* istanbul ignore next */ function (kgname, appName, callback) {
             return this.addKGAppConfig(kgname, appName, {}, {}, callback);
         },
         /**
@@ -400,7 +407,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getKGAppConfig: function (kgname, appName, callback) {
+        getKGAppConfig: /* istanbul ignore next */ function (kgname, appName, callback) {
             return this._ajax('GET', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName), null, callback);
         },
         /**
@@ -411,7 +418,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        deleteKGAppConfig: function (kgname, appName, callback) {
+        deleteKGAppConfig: /* istanbul ignore next */ function (kgname, appName, callback) {
             return this._ajax('DELETE', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName), null, callback);
         },
         /**
@@ -424,7 +431,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        updateKGAppUniversalConfig: function (kgname, appName, config, callback) {
+        updateKGAppUniversalConfig: /* istanbul ignore next */ function (kgname, appName, config, callback) {
             return this._ajax('PUT', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName) + '/universal', config, callback);
         },
         /**
@@ -437,7 +444,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        addKGAppMember: function (kgname, appName, memberName, config, callback) {
+        addKGAppMember: /* istanbul ignore next */ function (kgname, appName, memberName, config, callback) {
             if (!config) {
                 config = {};
             }
@@ -460,7 +467,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        updateKGAppMember: function (kgname, appName, memberName, config, callback) {
+        updateKGAppMember: /* istanbul ignore next */ function (kgname, appName, memberName, config, callback) {
             return this._ajax('PUT', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName) + '/members/' + encodeURIComponent(memberName) + '/config', config, callback);
         },
         /**
@@ -472,7 +479,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        deleteKGAppMember: function (kgname, appName, memberName, callback) {
+        deleteKGAppMember: /* istanbul ignore next */ function (kgname, appName, memberName, callback) {
             return this._ajax('DELETE', '/kb/' + encodeURIComponent(kgname) + '/config/' + encodeURIComponent(appName) + '/members/' + encodeURIComponent(memberName), null, callback);
         },
         /**
@@ -482,7 +489,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getKGGlobalConfig: function (kgname, callback) {
+        getKGGlobalConfig: /* istanbul ignore next */ function (kgname, callback) {
             return this._ajax('GET', '/kb/' + encodeURIComponent(kgname) + '/globalConfig', null, callback);
         },
         /**
@@ -494,7 +501,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        addKGGlobalProperty: function (kgname, propName, value, callback) {
+        addKGGlobalProperty: /* istanbul ignore next */ function (kgname, propName, value, callback) {
             var config = {};
             config[propName] = value;
             return this._ajax('PATCH', '/kb/' + encodeURIComponent(kgname) + '/globalConfig', config, callback);
@@ -507,7 +514,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        updateKGGlobalConfig: function (kgname, config, callback) {
+        updateKGGlobalConfig: /* istanbul ignore next */ function (kgname, config, callback) {
             return this._ajax('PUT', '/kb/' + encodeURIComponent(kgname) + '/globalConfig', config, callback);
         },
 
@@ -544,7 +551,7 @@
                     }
                 });
 
-                if (callback) {
+                if (typeof callback === 'function') {
                     callback(sorted);
                 }
                 return sorted;
@@ -562,7 +569,7 @@
                     return proc.id;
                 });
 
-                if (callback) {
+                if (typeof callback === 'function') {
                     callback(ids);
                 }
 
@@ -591,7 +598,7 @@
                     });
                 }
 
-                if (callback) {
+                if (typeof callback === 'function') {
                     callback(proc);
                 }
 
@@ -649,7 +656,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        killProcess: function (procId, callback) {
+        killProcess: /* istanbul ignore next */ function (procId, callback) {
             return this._ajax('PATCH', '/process/' + encodeURIComponent(procId), {"issuedCommand": "CANCEL"}, callback);
         },
         /**
@@ -658,7 +665,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listProcessTypes: function (callback) {
+        listProcessTypes: /* istanbul ignore next */ function (callback) {
             return this._ajax('GET', '/processType', null, callback);
         },
 
@@ -699,7 +706,7 @@
                         }
                     });
 
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback(schedules);
                     }
 
@@ -714,7 +721,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        createSchedule: function (schedule, callback) {
+        createSchedule: /* istanbul ignore next */ function (schedule, callback) {
             return this._ajax('POST', '/scheduler/schedule', schedule, callback);
         },
         /**
@@ -741,13 +748,13 @@
             return this._ajax('POST', '/scheduler/schedule', data).then(function (resp) {
                 if (startAfterCreation) {
                     return self.startSchedule(resp.id).then(function (startResp) {
-                        if (callback) {
-                            callback(resp);
+                        if (typeof callback === 'function') {
+                            callback(startResp);
                         }
-                        return resp;
+                        return startResp;
                     });
                 } else {
-                    if (callback) {
+                    if (typeof callback === 'function') {
                         callback(resp);
                     }
                     return resp;
@@ -760,7 +767,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listTemplates: function (callback) {
+        listTemplates: /* istanbul ignore next */ function (callback) {
             return this._ajax('GET', '/scheduler/template', null, callback);
         },
         /**
@@ -770,7 +777,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getTemplate: function (templateName, callback) {
+        getTemplate: /* istanbul ignore next */ function (templateName, callback) {
             return this._ajax('GET', '/scheduler/template/' + encodeURIComponent(templateName), null, callback);
         },
         /**
@@ -784,7 +791,7 @@
             return this.getTemplate(templateName).then(function (template) {
                 var mappings = template.mappings;
 
-                if (callback) {
+                if (typeof callback === 'function') {
                     callback(mappings);
                 }
 
@@ -798,7 +805,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getSchedule: function (scheduleId, callback) {
+        getSchedule: /* istanbul ignore next */ function (scheduleId, callback) {
             return this._ajax('GET', '/scheduler/schedule/' + encodeURIComponent(scheduleId), null, callback);
         },
         /**
@@ -863,25 +870,25 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listProcessesForSchedule: function (scheduleId, callback) {
-            var self = this;
-            // Get the schedule first, then do some process-ing
-            return this.getSchedule(scheduleId).then(function (schedule) {
-                var procIDs = self._listProcessIdsForSchedule(schedule);
-
-                // Get the info for the appropriate process IDs
-                return self.listProcesses().then(function (processes) {
-                    var filtered = processes.filter(function (process) {
-                        return procIDs.indexOf(process.id) !== -1;
-                    });
-
-                    if (callback) {
-                        callback(filtered);
-                    }
-                    return filtered;
-                });
-            });
-        },
+        //listProcessesForSchedule: function (scheduleId, callback) {
+        //    var self = this;
+        //    // Get the schedule first, then do some process-ing
+        //    return this.getSchedule(scheduleId).then(function (schedule) {
+        //        var procIDs = self._listProcessIdsForSchedule(schedule);
+        //
+        //        // Get the info for the appropriate process IDs
+        //        return self.listProcesses().then(function (processes) {
+        //            var filtered = processes.filter(function (process) {
+        //                return procIDs.indexOf(process.id) !== -1;
+        //            });
+        //
+        //            if (typeof callback === 'function') {
+        //                callback(filtered);
+        //            }
+        //            return filtered;
+        //        });
+        //    });
+        //},
         /**
          * In order for this to take effect, you must also change the status of the schedule (synic server limitation)
          *
@@ -890,7 +897,7 @@
          * @param {requestCallback} [callback] - the callback function
          * @returns {promise}
          */
-        updateScheduleMappings: function (scheduleId, mappings, callback) {
+        updateScheduleMappings: /* istanbul ignore next */ function (scheduleId, mappings, callback) {
             var updateData = {
                 mappings: mappings
             };
@@ -903,7 +910,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        startSchedule: function (scheduleId, callback) {
+        startSchedule: /* istanbul ignore next */ function (scheduleId, callback) {
             return this._ajax('PATCH', '/scheduler/schedule/' + encodeURIComponent(scheduleId), {status: 'STARTING'}, callback);
         },
         /**
@@ -913,7 +920,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        stopSchedule: function (scheduleId, callback) {
+        stopSchedule: /* istanbul ignore next */ function (scheduleId, callback) {
             return this._ajax('PATCH', '/scheduler/schedule/' + encodeURIComponent(scheduleId), {status: 'STOPPING'}, callback);
         },
 
@@ -928,7 +935,7 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        getJobData: function (kgname, procId, callback) {
+        getJobData: /* istanbul ignore next */ function (kgname, procId, callback) {
             return this._ajax('GET', '/jobdata/' + encodeURIComponent(kgname) + '/' + encodeURIComponent(procId), null, callback);
         }
 
@@ -938,12 +945,12 @@
     window.SynicClient = SynicClient;
 
     // Make it work with AMD things, such as require.js
-    // Use lowercase synic here, because the filename is synic.js.  AMD module names generally mirror filenames.
+    /* istanbul ignore next */
     if (typeof define === "function" && define.amd) {
-        define('synic', ['jquery'], function ($) {
+        define(['jquery'], function ($) {
             return SynicClient;
         });
     }
 
     return SynicClient;
-})();
+})(window);

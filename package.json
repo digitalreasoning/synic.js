@@ -1,0 +1,35 @@
+{
+  "name": "synic.js",
+  "version": "0.1.0",
+  "description": "Javascript Client for the SYNthesys Ingestion Coordinator",
+  "main": "src/synic.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "./node_modules/karma/bin/karma start --single-run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/digitalreasoning/synic.js.git"
+  },
+  "keywords": [
+    "synthesys",
+    "synic",
+    "ingestion"
+  ],
+  "author": "Clark Perkins <clark.perkins@digitalreasoning.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/digitalreasoning/synic.js/issues"
+  },
+  "homepage": "https://github.com/digitalreasoning/synic.js",
+  "devDependencies": {
+    "jasmine-core": "^2.2.0",
+    "karma": "^0.12.31",
+    "karma-coverage": "^0.2.7",
+    "karma-coveralls": "^0.1.5",
+    "karma-jasmine": "^0.3.5",
+    "karma-phantomjs-launcher": "^0.1.4"
+  }
+}
