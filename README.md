@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/digitalreasoning/synic.js.svg?branch=master)](https://travis-ci.org/digitalreasoning/synic.js)
-[![Coverage Status](https://coveralls.io/repos/digitalreasoning/synic.js/badge.svg)](https://coveralls.io/r/digitalreasoning/synic.js)
+[![Coverage Status](https://coveralls.io/repos/digitalreasoning/synic.js/badge.svg?branch=master)](https://coveralls.io/r/digitalreasoning/synic.js)
 
 synic.js
 ========
