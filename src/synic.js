@@ -665,8 +665,22 @@
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listProcessTypes: /* istanbul ignore next */ function (callback) {
-            return this._ajax('GET', '/processType', null, callback);
+        listProcessTypes: function (callback) {
+            return this._ajax('GET', '/processType').then(function (resp) {
+                var sorted = resp.sort(function (a, b) {
+                    if (a.name < b.name) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
+
+                if (typeof callback === 'function') {
+                    callback(sorted);
+                }
+
+                return sorted;
+            });
         },
 
         /*

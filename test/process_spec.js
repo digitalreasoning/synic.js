@@ -157,6 +157,18 @@ describe("Processes", function () {
         }
     ];
 
+    var procTypes = [
+        {"name":"pig"},
+        {"name":"hadoopstreaming"},
+        {"name":"hadoop"},
+        {"name":"hadoop-cdh4"},
+        {"name":"oozie-cdh4"},
+        {"name":"oozie"},
+        {"name":"pig-cdh4"},
+        {"name":"storm"},
+        {"name":"hadoopstreaming-cdh4"}
+    ];
+
     beforeEach(function () {
         synicClient = new SynicClient();
         jasmine.Ajax.install();
@@ -319,6 +331,39 @@ describe("Processes", function () {
             responseText: '{}'
         });
 
+        expect(doneFn).toHaveBeenCalled();
+    });
+
+    it("Test listProcessTypes", function () {
+        expect(synicClient.listProcessTypes).toBeTruthy();
+
+        var doneFn = jasmine.createSpy("success");
+
+        synicClient.listProcessTypes().then(function (resp) {
+            var lastType;
+
+            resp.forEach(function (type) {
+                // Ensure sorted by name
+                if (lastType) {
+                    expect(lastType.name).toBeLessThan(type.name);
+                }
+
+                lastType = type;
+            });
+
+        }).then(doneFn);
+
+        expect(doneFn).not.toHaveBeenCalled();
+
+        var procRequest = jasmine.Ajax.requests.mostRecent();
+
+        expect(procRequest.url).toBe('http://localhost:9011/synic/api/processType');
+        procRequest.respondWith({
+            status: 200,
+            contentType: 'application/json',
+            responseText: JSON.stringify(procTypes)
+        });
+        
         expect(doneFn).toHaveBeenCalled();
     });
 });
