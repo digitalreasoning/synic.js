@@ -241,6 +241,15 @@
                     // Put the active and pending KGs together
                     resp.concat(resp2);
 
+                    // Sort the list by name
+                    resp.sort(function (a, b) {
+                        if (a.name < b.name) {
+                            return -1;
+                        } else {
+                            return 1;
+                        }
+                    });
+
                     if (typeof callback === 'function') {
                         callback(resp);
                     }
