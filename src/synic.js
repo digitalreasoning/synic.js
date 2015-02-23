@@ -198,6 +198,7 @@
                 return self.listProcesses().then(function (processes) {
                     // Attach all the processes for each KG
                     kgs.forEach(function (kg) {
+                        kg.status = 'OK';
                         kg.processes = processes.filter(function (proc) {
                             return proc.kb === kg.name;
                         });
@@ -235,7 +236,17 @@
          * @returns {promise}
          */
         listKGs: function (callback) {
-            return this.listActiveKGs(callback);
+            return this.listActiveKGs().then(function (resp) {
+                this.listPendingKGs().then(function (resp2) {
+                    // Put the active and pending KGs together
+                    resp.concat(resp2);
+
+                    if (typeof callback === 'function') {
+                        callback(resp);
+                    }
+                    return resp
+                });
+            });
         },
         /**
          * Get an array of all the KG names instead of the full objects
