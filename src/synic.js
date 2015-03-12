@@ -13,13 +13,16 @@
 
     /**
      * Represents a synic client object with methods for all the synic functionality.
-     * @param {string} [synicURL=http://localhost:9011]- the URL of the synic server.  Defaults to 'http://localhost:9011'
+     * The URL defaults to the empty string, meaning you're hitting the synic api within the same app.
+     * (e.g sending an ajax request to '/synic/api/..' without the hostname or port)
+     *
+     * @param {string} [synicURL='']- the URL of the synic server.  Defaults to the empty string.
      * @constructor
      */
     var SynicClient = function(synicURL) {
         if (!synicURL) {
             // Default URL
-            this.synicURL = 'http://localhost:9011';
+            this.synicURL = '';
         } else {
             this.synicURL = synicURL;
         }
