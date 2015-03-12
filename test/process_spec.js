@@ -1,6 +1,8 @@
 
 describe("Processes", function () {
     var synicClient;
+    
+    var baseUrl = '';
 
     var procResp = [
         {
@@ -364,7 +366,7 @@ describe("Processes", function () {
 
         var procRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(procRequest.url).toBe('http://localhost:9011/synic/api/process');
+        expect(procRequest.url).toBe(baseUrl + '/synic/api/process');
         procRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -392,7 +394,7 @@ describe("Processes", function () {
 
         var procRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(procRequest.url).toBe('http://localhost:9011/synic/api/process');
+        expect(procRequest.url).toBe(baseUrl + '/synic/api/process');
         procRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -419,7 +421,7 @@ describe("Processes", function () {
 
         var procRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(procRequest.url).toBe('http://localhost:9011/synic/api/process/9928086c-9468-4988-ae0d-a1ed189d8e33');
+        expect(procRequest.url).toBe(baseUrl + '/synic/api/process/9928086c-9468-4988-ae0d-a1ed189d8e33');
         procRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -442,7 +444,7 @@ describe("Processes", function () {
 
         var triggerRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(triggerRequest.url).toBe('http://localhost:9011/synic/api/process');
+        expect(triggerRequest.url).toBe(baseUrl + '/synic/api/process');
         triggerRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -465,7 +467,7 @@ describe("Processes", function () {
 
         var procRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(procRequest.url).toBe('http://localhost:9011/synic/api/process/9928086c-9468-4988-ae0d-a1ed189d8e33');
+        expect(procRequest.url).toBe(baseUrl + '/synic/api/process/9928086c-9468-4988-ae0d-a1ed189d8e33');
         procRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -481,7 +483,7 @@ describe("Processes", function () {
         expect(triggerRequest.data().invocationConfig.hasOwnProperty('useProcessId')).toBe(true);
         expect(triggerRequest.data().invocationConfig.useProcessId).toBe('9928086c-9468-4988-ae0d-a1ed189d8e33');
 
-        expect(triggerRequest.url).toBe('http://localhost:9011/synic/api/process');
+        expect(triggerRequest.url).toBe(baseUrl + '/synic/api/process');
         triggerRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -514,7 +516,7 @@ describe("Processes", function () {
 
         var procRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(procRequest.url).toBe('http://localhost:9011/synic/api/processType');
+        expect(procRequest.url).toBe(baseUrl + '/synic/api/processType');
         procRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -559,7 +561,7 @@ describe("Processes", function () {
 
         var procRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(procRequest.url).toBe('http://localhost:9011/synic/api/application');
+        expect(procRequest.url).toBe(baseUrl + '/synic/api/application');
         procRequest.respondWith({
             status: 200,
             contentType: 'application/json',

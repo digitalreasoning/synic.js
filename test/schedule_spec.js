@@ -1,6 +1,8 @@
 
 describe("Schedules", function () {
     var synicClient;
+    
+    var baseUrl = '';
 
     var schedResp = [
         {
@@ -320,7 +322,7 @@ describe("Schedules", function () {
         // Respond to KG request
         var schedRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(schedRequest.url).toBe('http://localhost:9011/synic/api/scheduler/schedule');
+        expect(schedRequest.url).toBe(baseUrl + '/synic/api/scheduler/schedule');
         schedRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -334,7 +336,7 @@ describe("Schedules", function () {
         // Respond to process request
         var procRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(procRequest.url).toBe('http://localhost:9011/synic/api/process');
+        expect(procRequest.url).toBe(baseUrl + '/synic/api/process');
         procRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -357,7 +359,7 @@ describe("Schedules", function () {
 
         var schedCreateRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(schedCreateRequest.url).toBe('http://localhost:9011/synic/api/scheduler/schedule');
+        expect(schedCreateRequest.url).toBe(baseUrl + '/synic/api/scheduler/schedule');
 
         schedCreateRequest.respondWith({
             status: 200,
@@ -381,7 +383,7 @@ describe("Schedules", function () {
 
         var schedCreateRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(schedCreateRequest.url).toBe('http://localhost:9011/synic/api/scheduler/schedule');
+        expect(schedCreateRequest.url).toBe(baseUrl + '/synic/api/scheduler/schedule');
 
         schedCreateRequest.respondWith({
             status: 200,
@@ -393,7 +395,7 @@ describe("Schedules", function () {
 
         var schedStartRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(schedStartRequest.url).toBe('http://localhost:9011/synic/api/scheduler/schedule/'+schedResp[0].id);
+        expect(schedStartRequest.url).toBe(baseUrl + '/synic/api/scheduler/schedule/'+schedResp[0].id);
 
         schedResp[0].status = "STARTING";
 
@@ -474,7 +476,7 @@ describe("Schedules", function () {
 
         var mappingsRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(mappingsRequest.url).toBe('http://localhost:9011/synic/api/scheduler/template/synthesys-batch-ingestion');
+        expect(mappingsRequest.url).toBe(baseUrl + '/synic/api/scheduler/template/synthesys-batch-ingestion');
         mappingsRequest.respondWith({
             status: 200,
             contentType: 'application/json',
