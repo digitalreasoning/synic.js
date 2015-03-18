@@ -13,13 +13,16 @@
 
     /**
      * Represents a synic client object with methods for all the synic functionality.
-     * @param {string} [synicURL=http://localhost:9011]- the URL of the synic server.  Defaults to 'http://localhost:9011'
+     * The URL defaults to the empty string, meaning you're hitting the synic api within the same app.
+     * (e.g sending an ajax request to '/synic/api/..' without the hostname or port)
+     *
+     * @param {string} [synicURL='']- the URL of the synic server.  Defaults to the empty string.
      * @constructor
      */
     var SynicClient = function(synicURL) {
         if (!synicURL) {
             // Default URL
-            this.synicURL = 'http://localhost:9011';
+            this.synicURL = '';
         } else {
             this.synicURL = synicURL;
         }
@@ -682,6 +685,32 @@
                 return sorted;
             });
         },
+        /**
+         * Get a list of all the runnable applications
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        listApplications: function (callback) {
+            return this._ajax('GET', '/application').then(function (resp) {
+                resp.forEach(function (app) {
+                    app.processTypes = app.processTypes.sort();
+                });
+
+                var sorted = resp.sort(function (a, b) {
+                    if (a.name < b.name) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
+
+                if (typeof callback === 'function') {
+                    callback(sorted);
+                }
+
+                return sorted;
+            });
+        },
 
         /*
          *   Schedules
@@ -877,32 +906,6 @@
 
             return procIDs;
         },
-        /**
-         * Get a list of all the processes associated with the given schedule
-         *
-         * @param {string} scheduleId - the schedule ID
-         * @param {requestCallback} [callback]
-         * @returns {promise}
-         */
-        //listProcessesForSchedule: function (scheduleId, callback) {
-        //    var self = this;
-        //    // Get the schedule first, then do some process-ing
-        //    return this.getSchedule(scheduleId).then(function (schedule) {
-        //        var procIDs = self._listProcessIdsForSchedule(schedule);
-        //
-        //        // Get the info for the appropriate process IDs
-        //        return self.listProcesses().then(function (processes) {
-        //            var filtered = processes.filter(function (process) {
-        //                return procIDs.indexOf(process.id) !== -1;
-        //            });
-        //
-        //            if (typeof callback === 'function') {
-        //                callback(filtered);
-        //            }
-        //            return filtered;
-        //        });
-        //    });
-        //},
         /**
          * In order for this to take effect, you must also change the status of the schedule (synic server limitation)
          *

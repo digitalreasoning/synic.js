@@ -1,6 +1,8 @@
 
 describe("Knowledge Graphs", function () {
     var synicClient;
+    
+    var baseUrl = '';
 
     var kgResp = [
         {
@@ -79,7 +81,7 @@ describe("Knowledge Graphs", function () {
         // Respond to KG request
         var kgRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(kgRequest.url).toBe('http://localhost:9011/synic/api/kb');
+        expect(kgRequest.url).toBe(baseUrl + '/synic/api/kb');
         kgRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -93,7 +95,7 @@ describe("Knowledge Graphs", function () {
         // Respond to process request
         var procRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(procRequest.url).toBe('http://localhost:9011/synic/api/process');
+        expect(procRequest.url).toBe(baseUrl + '/synic/api/process');
         procRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -131,7 +133,7 @@ describe("Knowledge Graphs", function () {
         // Respond to KG request
         var kgRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(kgRequest.url).toBe('http://localhost:9011/synic/api/kb');
+        expect(kgRequest.url).toBe(baseUrl + '/synic/api/kb');
         kgRequest.respondWith({
             status: 200,
             contentType: 'application/json',

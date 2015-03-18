@@ -1,6 +1,8 @@
 
 describe("Processes", function () {
     var synicClient;
+    
+    var baseUrl = '';
 
     var procResp = [
         {
@@ -169,6 +171,163 @@ describe("Processes", function () {
         {"name":"hadoopstreaming-cdh4"}
     ];
 
+    var applications = [
+        {
+            "elasticSearchMappingPresent": false,
+            "harvestDescriptorPresent": false,
+            "processTypes": [
+                "hadoopstreaming",
+                "pig-cdh4",
+                "hadoop",
+                "oozie",
+                "hadoop-cdh4",
+                "pig",
+                "oozie-cdh4",
+                "hadoopstreaming-cdh4"
+            ],
+            "name": "knowledgeobjects"
+        },
+        {
+            "elasticSearchMappingPresent": false,
+            "harvestDescriptorPresent": true,
+            "processTypes": [
+                "hadoopstreaming",
+                "pig-cdh4",
+                "hadoop",
+                "oozie",
+                "hadoop-cdh4",
+                "pig",
+                "oozie-cdh4",
+                "hadoopstreaming-cdh4"
+            ],
+            "name": "resonance"
+        },
+        {
+            "elasticSearchMappingPresent": false,
+            "harvestDescriptorPresent": false,
+            "processTypes": [
+                "hadoopstreaming",
+                "pig-cdh4",
+                "hadoop",
+                "oozie",
+                "hadoop-cdh4",
+                "pig",
+                "oozie-cdh4",
+                "hadoopstreaming-cdh4"
+            ],
+            "name": "test"
+        },
+        {
+            "elasticSearchMappingPresent": false,
+            "harvestDescriptorPresent": false,
+            "processTypes": [
+                "pig-cdh4",
+                "pig"
+            ],
+            "name": "synic-hadoopstreaming-test"
+        },
+        {
+            "elasticSearchMappingPresent": false,
+            "harvestDescriptorPresent": true,
+            "processTypes": [
+                "hadoopstreaming",
+                "pig-cdh4",
+                "hadoop",
+                "oozie",
+                "hadoop-cdh4",
+                "pig",
+                "oozie-cdh4",
+                "hadoopstreaming-cdh4"
+            ],
+            "name": "frequencies"
+        },
+        {
+            "elasticSearchMappingPresent": false,
+            "harvestDescriptorPresent": true,
+            "processTypes": [
+                "hadoopstreaming",
+                "pig-cdh4",
+                "hadoop",
+                "oozie",
+                "hadoop-cdh4",
+                "pig",
+                "oozie-cdh4",
+                "hadoopstreaming-cdh4"
+            ],
+            "name": "associativenet"
+        },
+        {
+            "elasticSearchMappingPresent": true,
+            "harvestDescriptorPresent": false,
+            "processTypes": [
+                "hadoopstreaming",
+                "pig-cdh4",
+                "hadoop",
+                "oozie",
+                "hadoop-cdh4",
+                "pig",
+                "oozie-cdh4",
+                "hadoopstreaming-cdh4"
+            ],
+            "name": "keyindicators"
+        },
+        {
+            "elasticSearchMappingPresent": false,
+            "harvestDescriptorPresent": false,
+            "processTypes": [
+                "hadoopstreaming",
+                "pig-cdh4",
+                "hadoop",
+                "oozie",
+                "hadoop-cdh4",
+                "pig",
+                "oozie-cdh4",
+                "hadoopstreaming-cdh4"
+            ],
+            "name": "dianoga"
+        },
+        {
+            "elasticSearchMappingPresent": false,
+            "harvestDescriptorPresent": false,
+            "processTypes": [
+                "hadoopstreaming",
+                "pig-cdh4",
+                "hadoop",
+                "storm",
+                "oozie",
+                "hadoop-cdh4",
+                "pig",
+                "oozie-cdh4",
+                "hadoopstreaming-cdh4"
+            ],
+            "name": "rivulet"
+        },
+        {
+            "elasticSearchMappingPresent": false,
+            "harvestDescriptorPresent": false,
+            "processTypes": [
+                "hadoopstreaming",
+                "pig-cdh4",
+                "hadoop",
+                "oozie",
+                "hadoop-cdh4",
+                "pig",
+                "oozie-cdh4",
+                "hadoopstreaming-cdh4"
+            ],
+            "name": "synic-batchsummary-cdh4"
+        },
+        {
+            "elasticSearchMappingPresent": false,
+            "harvestDescriptorPresent": false,
+            "processTypes": [
+                "pig-cdh4",
+                "pig"
+            ],
+            "name": "synmodel-pig"
+        }
+    ];
+
     beforeEach(function () {
         synicClient = new SynicClient();
         jasmine.Ajax.install();
@@ -207,7 +366,7 @@ describe("Processes", function () {
 
         var procRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(procRequest.url).toBe('http://localhost:9011/synic/api/process');
+        expect(procRequest.url).toBe(baseUrl + '/synic/api/process');
         procRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -235,7 +394,7 @@ describe("Processes", function () {
 
         var procRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(procRequest.url).toBe('http://localhost:9011/synic/api/process');
+        expect(procRequest.url).toBe(baseUrl + '/synic/api/process');
         procRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -262,7 +421,7 @@ describe("Processes", function () {
 
         var procRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(procRequest.url).toBe('http://localhost:9011/synic/api/process/9928086c-9468-4988-ae0d-a1ed189d8e33');
+        expect(procRequest.url).toBe(baseUrl + '/synic/api/process/9928086c-9468-4988-ae0d-a1ed189d8e33');
         procRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -285,7 +444,7 @@ describe("Processes", function () {
 
         var triggerRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(triggerRequest.url).toBe('http://localhost:9011/synic/api/process');
+        expect(triggerRequest.url).toBe(baseUrl + '/synic/api/process');
         triggerRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -308,7 +467,7 @@ describe("Processes", function () {
 
         var procRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(procRequest.url).toBe('http://localhost:9011/synic/api/process/9928086c-9468-4988-ae0d-a1ed189d8e33');
+        expect(procRequest.url).toBe(baseUrl + '/synic/api/process/9928086c-9468-4988-ae0d-a1ed189d8e33');
         procRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -324,7 +483,7 @@ describe("Processes", function () {
         expect(triggerRequest.data().invocationConfig.hasOwnProperty('useProcessId')).toBe(true);
         expect(triggerRequest.data().invocationConfig.useProcessId).toBe('9928086c-9468-4988-ae0d-a1ed189d8e33');
 
-        expect(triggerRequest.url).toBe('http://localhost:9011/synic/api/process');
+        expect(triggerRequest.url).toBe(baseUrl + '/synic/api/process');
         triggerRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -357,13 +516,58 @@ describe("Processes", function () {
 
         var procRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(procRequest.url).toBe('http://localhost:9011/synic/api/processType');
+        expect(procRequest.url).toBe(baseUrl + '/synic/api/processType');
         procRequest.respondWith({
             status: 200,
             contentType: 'application/json',
             responseText: JSON.stringify(procTypes)
         });
         
+        expect(doneFn).toHaveBeenCalled();
+    });
+
+    it("Test listApplications", function () {
+        expect(synicClient.listApplications).toBeTruthy();
+
+        var doneFn = jasmine.createSpy("success");
+
+        synicClient.listApplications().then(function (resp) {
+            var lastApp;
+
+            resp.forEach(function (app) {
+                // Ensure sorted by name
+                if (lastApp) {
+                    expect(lastApp.name).toBeLessThan(app.name);
+                }
+
+                lastApp = app;
+
+                var lastType;
+
+                // Ensure types are sorted also
+                app.processTypes.forEach(function (type) {
+                    // Ensure sorted by name
+                    if (lastType) {
+                        expect(lastType).toBeLessThan(type);
+                    }
+
+                    lastType = type;
+                });
+            });
+
+        }).then(doneFn);
+
+        expect(doneFn).not.toHaveBeenCalled();
+
+        var procRequest = jasmine.Ajax.requests.mostRecent();
+
+        expect(procRequest.url).toBe(baseUrl + '/synic/api/application');
+        procRequest.respondWith({
+            status: 200,
+            contentType: 'application/json',
+            responseText: JSON.stringify(applications)
+        });
+
         expect(doneFn).toHaveBeenCalled();
     });
 });

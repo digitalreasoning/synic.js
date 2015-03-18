@@ -1,5 +1,7 @@
 
 describe("General", function () {
+    var baseUrl = '';
+    
     beforeEach(function () {
         jasmine.Ajax.install();
     });
@@ -11,7 +13,7 @@ describe("General", function () {
     it("Test Constructor", function () {
         var synicClient = new SynicClient();
 
-        expect(synicClient.synicURL).toBe('http://localhost:9011');
+        expect(synicClient.synicURL).toBe(baseUrl + '');
 
         synicClient = new SynicClient('http://synic.example.com:9011');
 
@@ -41,7 +43,7 @@ describe("General", function () {
 
         var versionRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(versionRequest.url).toBe('http://localhost:9011/synic/api/app');
+        expect(versionRequest.url).toBe(baseUrl + '/synic/api/app');
         versionRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -64,7 +66,7 @@ describe("General", function () {
 
         var testRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(testRequest.url).toBe('http://localhost:9011/synic/api');
+        expect(testRequest.url).toBe(baseUrl + '/synic/api');
         testRequest.respondWith({
             status: 200,
             contentType: 'application/json',
@@ -87,7 +89,7 @@ describe("General", function () {
 
         var testRequest = jasmine.Ajax.requests.mostRecent();
 
-        expect(testRequest.url).toBe('http://localhost:9011/synic/api');
+        expect(testRequest.url).toBe(baseUrl + '/synic/api');
         testRequest.respondWith({
             status: 500,
             contentType: 'application/json',
