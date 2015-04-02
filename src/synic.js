@@ -17,15 +17,19 @@
      * (e.g sending an ajax request to '/synic/api/..' without the hostname or port)
      *
      * @param {string} [synicURL='']- the URL of the synic server.  Defaults to the empty string.
+     * @param {string} [user]- the username to authenticate with.  Only needed if synic needs authentication.
+     * @param {string} [password]- the password to authenticate with.  Only needed if synic needs authentication.
      * @constructor
      */
-    var SynicClient = function(synicURL) {
-        if (!synicURL) {
-            // Default URL
-            this.synicURL = '';
-        } else {
-            this.synicURL = synicURL;
+    var SynicClient = function(synicURL, user, password) {
+        // Defaults
+        if (typeof synicURL === 'undefined') {
+            synicURL = '';
         }
+
+        this.synicURL = synicURL;
+        this.user = user;
+        this.password = password;
     };
 
     SynicClient.prototype = {
@@ -61,6 +65,14 @@
 
             if (data) {
                 ajaxData.data = JSON.stringify(data);
+            }
+
+            if (this.user && this.password) {
+                ajaxData.username = this.user;
+                ajaxData.password = this.password;
+                ajaxData.xhrFields = {
+                    withCredentials: true
+                };
             }
 
             return $.ajax(ajaxData);
