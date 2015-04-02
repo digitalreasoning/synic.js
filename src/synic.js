@@ -1,5 +1,5 @@
 /**
- * @version: 0.1.1
+ * @version: 0.1.2
  * @author: Clark Perkins <clark.perkins@digitalreasoning.com>
  * @date: 2014-12-05
  */
