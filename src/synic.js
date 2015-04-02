@@ -47,6 +47,7 @@
                 url: this.synicURL + '/synic/api' + endpoint,
                 contentType: 'application/json',
                 headers: {},
+                cache: false,
                 success: function (response, status, xhr) {
                     if (typeof callback === 'function') {
                         callback(response);
