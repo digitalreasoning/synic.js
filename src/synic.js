@@ -192,14 +192,19 @@
         /**
          * Get a list of all active KGs
          *
+         * @param {number} [processLimit]
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listActiveKGs: function (callback) {
+        listActiveKGs: function (processLimit, callback) {
             var self = this;
 
+            if (typeof processLimit === 'undefined') {
+                processLimit = 10;
+            }
+
             return this._ajax('GET', '/kb').then(function (kgs) {
-                return self.listProcesses().then(function (processes) {
+                return self.listProcessesPaged(processLimit).then(function (processes) {
                     // Attach all the processes for each KG
                     kgs.forEach(function (kg) {
                         kg.processes = processes.filter(function (proc) {
@@ -235,11 +240,12 @@
         /**
          * Get a list of all the KGs from the server
          *
+         * @param {number} [processLimit]
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listKGs: function (callback) {
-            return this.listActiveKGs(callback);
+        listKGs: function (processLimit, callback) {
+            return this.listActiveKGs(processLimit, callback);
         },
         /**
          * Get an array of all the KG names instead of the full objects
@@ -528,7 +534,7 @@
         /**
          * Get a list of all processes synic has created
          *
-         * @param [callback]
+         * @param {requestCallback} [callback]
          * @returns {promise}
          */
         listProcesses: function (callback) {
@@ -561,6 +567,42 @@
                 return sorted;
             });
         },
+
+        /**
+         * Get a paged list of all processes synic has created
+         *
+         * @param {number} limit - the number of processes to return
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        listProcessesPaged: function (limit, callback) {
+            if (typeof limit === 'undefined') {
+                limit = 10;
+            }
+
+            var self = this;
+
+            return this._ajax('GET', '/processPaged?limit='+limit).then(function (resp) {
+                var processes = resp.results;
+                processes.forEach(function (proc) {
+                    proc.requestedTime = self._parseDate(proc.requestedTime);
+                    proc.startedTime = self._parseDate(proc.startedTime);
+                    proc.completedTime = self._parseDate(proc.completedTime);
+                    if (proc.steps) {
+                        proc.steps.forEach(function (step) {
+                            step.startTime = self._parseDate(step.startTime);
+                            step.endTime = self._parseDate(step.endTime);
+                        });
+                    }
+                });
+
+                if (typeof callback === 'function') {
+                    callback(processes);
+                }
+                return processes;
+            });
+        },
+
         /**
          * Get a list of all the process IDs
          *
@@ -719,14 +761,19 @@
         /**
          * Show all the schedules
          *
+         * @param {number} [processLimit]
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        listSchedules: function (callback) {
+        listSchedules: function (processLimit, callback) {
             var self = this;
 
+            if (typeof processLimit === 'undefined') {
+                processLimit = 10;
+            }
+
             return this._ajax('GET', '/scheduler/schedule').then(function (schedules) {
-                return self.listProcesses().then(function (processes) {
+                return self.listProcessesPaged(processLimit).then(function (processes) {
 
                     schedules.forEach(function (schedule) {
                         var procIDs = self._listProcessIdsForSchedule(schedule);
