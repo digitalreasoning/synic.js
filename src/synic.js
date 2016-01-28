@@ -26,6 +26,7 @@
         } else {
             this.synicURL = synicURL;
         }
+        this.errorCallback = function (xhr) {};
     };
 
     SynicClient.prototype = {
@@ -42,6 +43,7 @@
          * @private
          */
         _ajax: function (method, endpoint, data, callback) {
+            var self = this;
             var ajaxData = {
                 type: method,
                 url: this.synicURL + '/synic/api' + endpoint,
@@ -54,6 +56,7 @@
                     }
                 },
                 error: function (xhr, status, error) {
+                    self.errorCallback(xhr);
                     if (typeof callback === 'function') {
                         callback(new Error(xhr));
                     }
