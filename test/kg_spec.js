@@ -7,17 +7,14 @@ describe("Knowledge Graphs", function () {
     var kgResp = [
         {
             name: 'clark2',
-            db: 'default',
             config: {}
         },
         {
             name: 'floop',
-            db: 'default',
             config: {}
         },
         {
             name: 'clark',
-            db: 'default',
             config: {}
         }
     ];
