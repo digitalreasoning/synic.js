@@ -26,7 +26,6 @@
     <thead>
         <tr>
             <th>Name</th>
-            <th>DB</th>
         </tr>
     </thead>
     <tbody id="kg"></tbody>
@@ -42,7 +41,7 @@
             client.listKGs().then(function(resp) {
                 var tableHtml = '';
                 resp.forEach(function(kg) {
-                    tableHtml += '<tr><td>'+kg.name+'</td><td>'+kg.db+'</td></tr>';
+                    tableHtml += '<tr><td>'+kg.name+'</td></tr>';
                 });
                 $('#kg').html(tableHtml);
             });
@@ -52,7 +51,7 @@
             var kgname = $('#createKG');
             var status = $('#createStatus');
             status.html('CREATING');
-            client.createKG(kgname.val(), 'default', {}, function(resp) {
+            client.createKG(kgname.val(), {}, function(resp) {
                 status.html('');
                 loadKG();
             });

@@ -142,52 +142,23 @@
         },
 
         /*
-         *   DB
-         */
-        /**
-         * List all the database configurations
-         *
-         * @param {requestCallback} [callback]
-         * @returns {promise}
-         */
-        listDBs: /* istanbul ignore next */ function (callback) {
-            return this._ajax('GET', '/db', null, callback);
-        },
-        /**
-         * Get information about a specific DB
-         *
-         * @param {string} dbname - the name of the db
-         * @param {requestCallback} [callback]
-         * @returns {promise}
-         */
-        getDB: /* istanbul ignore next */ function (dbname, callback) {
-            return this._ajax('GET', '/db/' + encodeURIComponent(dbname), null, callback);
-        },
-
-        /*
          *   KG
          */
         /**
          * Create a Knowledge Graph
          *
          * @param {string} kgname - the name of the KG to create
-         * @param {string} [db=default] - the db to put the KG in
          * @param {object} [config={}] - Any KG config to add
          * @param {requestCallback} [callback]
          * @returns {promise}
          */
-        createKG: function (kgname, db, config, callback) {
+        createKG: function (kgname, config, callback) {
             if (!config) {
                 config = {};
             }
 
-            if (!db) {
-                db = 'default';
-            }
-
             var kgdata = {
                 name: kgname,
-                db: db,
                 config: config
             };
             return this._ajax('POST', '/kb', kgdata, callback);
