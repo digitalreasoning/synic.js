@@ -21,7 +21,8 @@
     "tests"
   ],
   "dependencies": {
-    "jquery": ">= 1.9.1"
+    "jquery": ">= 1.9.1",
+    "moment": "~2.11.0"
   },
   "devDependencies": {
     "jasmine-ajax": "~3.0.0"

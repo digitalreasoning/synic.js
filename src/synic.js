@@ -5,13 +5,13 @@
  */
 (function (global, factory) {
     if (typeof exports === 'object' && typeof module !== 'undefined') {
-        module.exports = factory(jQuery);
+        module.exports = factory(jQuery, moment);
     } else if (typeof define === 'function' && define.amd) {
-        define(['jquery'], factory);
+        define(['jquery', 'moment'], factory);
     } else {
-        global.SynicClient = factory(jQuery);
+        global.SynicClient = factory(jQuery, moment);
     }
-} (window, function ($) {
+} (window, function ($, moment) {
     if ( typeof $ === 'undefined' ) {
         throw new Error( 'synic.js requires jQuery' )
     }
@@ -91,19 +91,7 @@
          */
         _parseDate: function (dateString) {
             if (dateString) {
-                var year = dateString.substring(0, 4);
-                var month = dateString.substring(5, 7); // Zero indexed
-                var day = dateString.substring(8, 10);
-
-                var hour = dateString.substring(11, 13);
-                var minute = dateString.substring(14, 16);
-                var second = dateString.substring(17, 19);
-
-                var milli = dateString.substring(20, 23);
-
-                var d = new Date(year, month - 1, day, hour, minute, second, milli);
-
-                return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+                return moment(dateString);
             } else {
                 return null;
             }
