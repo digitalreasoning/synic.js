@@ -1,9 +1,21 @@
 /**
- * @version: 0.1.3
+ * @version: 0.2.0
  * @author: Clark Perkins <clark.perkins@digitalreasoning.com>
  * @date: 2014-12-05
  */
-(function(window, undefined) {
+(function (global, factory) {
+    if (typeof exports === 'object' && typeof module !== 'undefined') {
+        module.exports = factory(jQuery);
+    } else if (typeof define === 'function' && define.amd) {
+        define(['jquery'], factory);
+    } else {
+        global.SynicClient = factory(jQuery);
+    }
+} (window, function ($) {
+    if ( typeof $ === 'undefined' ) {
+        throw new Error( 'synic.js requires jQuery' )
+    }
+
     /**
      * This is what all callback functions should look like
      *
@@ -80,14 +92,14 @@
         _parseDate: function (dateString) {
             if (dateString) {
                 var year = dateString.substring(0, 4);
-                var month = dateString.substring(4, 6); // Zero indexed
-                var day = dateString.substring(6, 8);
+                var month = dateString.substring(5, 7); // Zero indexed
+                var day = dateString.substring(8, 10);
 
-                var hour = dateString.substring(9, 11);
-                var minute = dateString.substring(11, 13);
-                var second = dateString.substring(13, 15);
+                var hour = dateString.substring(11, 13);
+                var minute = dateString.substring(14, 16);
+                var second = dateString.substring(17, 19);
 
-                var milli = dateString.substring(16, 19);
+                var milli = dateString.substring(20, 23);
 
                 var d = new Date(year, month - 1, day, hour, minute, second, milli);
 
@@ -980,16 +992,5 @@
 
     };
 
-    // Expose SynicClient to the global object
-    window.SynicClient = SynicClient;
-
-    // Make it work with AMD things, such as require.js
-    /* istanbul ignore next */
-    if (typeof define === "function" && define.amd) {
-        define(['jquery'], function ($) {
-            return SynicClient;
-        });
-    }
-
     return SynicClient;
-})(window);
+}));
