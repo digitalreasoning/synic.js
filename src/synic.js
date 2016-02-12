@@ -616,6 +616,12 @@
                     proc.steps.forEach(function (step) {
                         step.startTime = self._parseDate(step.startTime);
                         step.endTime = self._parseDate(step.endTime);
+                        if (step.details && step.details.actions) {
+                            step.details.actions.forEach(function (action) {
+                                action.startTime = self._parseDate(action.startTime);
+                                action.endTime = self._parseDate(action.endTime);
+                            });
+                        }
                     });
                 }
 
