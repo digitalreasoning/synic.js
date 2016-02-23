@@ -7,7 +7,7 @@
     if (typeof exports === 'object' && typeof module !== 'undefined') {
         module.exports = factory(jQuery, moment);
     } else if (typeof define === 'function' && define.amd) {
-        define(['jquery', 'moment-timezone'], factory);
+        define(['jquery', 'moment'], factory);
     } else {
         global.SynicClient = factory(jQuery, moment);
     }
@@ -91,8 +91,7 @@
          */
         _parseDate: function (dateString) {
             if (dateString) {
-                var dateMoment = moment(dateString);
-                return dateMoment.tz(moment.tz.guess(dateMoment.utcOffset)).format('YYYY-DD-MM HH:mm:ss z');
+                return moment(dateString).format('YYYY-MM-DD HH:mm:ss');
             } else {
                 return null;
             }
