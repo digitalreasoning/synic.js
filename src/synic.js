@@ -720,7 +720,7 @@
                 });
 
                 var sorted = resp.sort(function (a, b) {
-                    if (a.name < b.name) {
+                    if (a.readableName < b.readableName) {
                         return -1;
                     } else {
                         return 1;
