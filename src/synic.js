@@ -1,5 +1,5 @@
 /**
- * @version: 0.2.3
+ * @version: 0.2.4
  * @author: Clark Perkins <clark.perkins@digitalreasoning.com>
  * @date: 2014-12-05
  */
@@ -92,6 +92,20 @@
         _parseDate: function (dateString) {
             if (dateString) {
                 return moment(dateString).format('YYYY-MM-DD HH:mm:ss');
+            } else {
+                return null;
+            }
+        },
+
+        _buildDurationString: function (startDateString, endDateString) {
+            if (startDateString && endDateString) {
+                var diffSeconds = moment(endDateString).diff(moment(startDateString)) / 1000;
+                var seconds = diffSeconds % 60;
+                var diffMins = diffSeconds / 60 | 0;
+                var mins = diffMins % 60;
+                var hours = diffMins / 60 | 0;
+
+                return hours + ':' + mins.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
             } else {
                 return null;
             }
@@ -562,6 +576,8 @@
                     proc.requestedTime = self._parseDate(proc.requestedTime);
                     proc.startedTime = self._parseDate(proc.startedTime);
                     proc.completedTime = self._parseDate(proc.completedTime);
+                    proc.totalRuntime = self._buildDurationString(proc.startedTime, proc.completedTime)
+
                     if (proc.steps) {
                         proc.steps.forEach(function (step) {
                             step.startTime = self._parseDate(step.startTime);
