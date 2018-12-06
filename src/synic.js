@@ -541,10 +541,13 @@
                     proc.requestedTime = self._parseDate(proc.requestedTime);
                     proc.startedTime = self._parseDate(proc.startedTime);
                     proc.completedTime = self._parseDate(proc.completedTime);
+                    proc.totalRuntime = self._buildDurationString(proc.startedTime, proc.completedTime);
+
                     if (proc.steps) {
                         proc.steps.forEach(function (step) {
                             step.startTime = self._parseDate(step.startTime);
                             step.endTime = self._parseDate(step.endTime);
+                            step.totalRuntime = self._buildDurationString(step.startTime, step.endTime);
                         });
                     }
                 });
@@ -576,12 +579,13 @@
                     proc.requestedTime = self._parseDate(proc.requestedTime);
                     proc.startedTime = self._parseDate(proc.startedTime);
                     proc.completedTime = self._parseDate(proc.completedTime);
-                    proc.totalRuntime = self._buildDurationString(proc.startedTime, proc.completedTime)
+                    proc.totalRuntime = self._buildDurationString(proc.startedTime, proc.completedTime);
 
                     if (proc.steps) {
                         proc.steps.forEach(function (step) {
                             step.startTime = self._parseDate(step.startTime);
                             step.endTime = self._parseDate(step.endTime);
+                            step.totalRuntime = self._buildDurationString(step.startTime, step.endTime);
                         });
                     }
                 });
@@ -626,15 +630,19 @@
                 proc.requestedTime = self._parseDate(proc.requestedTime);
                 proc.startedTime = self._parseDate(proc.startedTime);
                 proc.completedTime = self._parseDate(proc.completedTime);
+                proc.totalRuntime = self._buildDurationString(proc.startedTime, proc.completedTime);
 
                 if (proc.steps) {
                     proc.steps.forEach(function (step) {
                         step.startTime = self._parseDate(step.startTime);
                         step.endTime = self._parseDate(step.endTime);
+                        step.totalRuntime = self._buildDurationString(step.startTime, step.endTime);
+
                         if (step.details && step.details.actions) {
                             step.details.actions.forEach(function (action) {
                                 action.startTime = self._parseDate(action.startTime);
                                 action.endTime = self._parseDate(action.endTime);
+                                action.totalRuntime = self._buildDurationString(action.startTime, action.endTime);
                             });
                         }
                     });
