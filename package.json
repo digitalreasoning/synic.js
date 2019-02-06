@@ -1,6 +1,6 @@
 {
   "name": "synic.js",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Javascript Client for the SYNthesys Ingestion Coordinator",
   "main": "src/synic.js",
   "directories": {
