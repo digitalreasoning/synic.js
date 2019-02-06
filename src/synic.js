@@ -97,6 +97,23 @@
             }
         },
 
+        // modified from the String.padStart pollyfill here:
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padStart#Polyfill
+        _padStart: function (string, targetLength, padString) {
+            string = String(string) // convert to string if non-string gets passed.
+            targetLength = targetLength >> 0; //truncate if number, or convert non-number to 0;
+            padString = String(typeof padString !== 'undefined' ? padString : ' ');
+            if (string.length >= targetLength) {
+                return string;
+            } else {
+                targetLength = targetLength - string.length;
+                if (targetLength > padString.length) {
+                    padString += padString.repeat(targetLength / padString.length); //append to original to ensure we are longer than needed
+                }
+                return padString.slice(0, targetLength) + string;
+            }
+        },
+
         _buildDurationString: function (startDateString, endDateString) {
             if (startDateString && endDateString) {
                 var diffSeconds = moment(endDateString).diff(moment(startDateString)) / 1000;
@@ -105,7 +122,7 @@
                 var mins = diffMins % 60;
                 var hours = diffMins / 60 | 0;
 
-                return hours + ':' + mins.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+                return hours + ':' + this._padStart(mins.toString(), 2, '0') + ':' + this._padStart(seconds.toString(), 2, '0');
             } else {
                 return null;
             }
