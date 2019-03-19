@@ -51,16 +51,17 @@
          * @param {string} endpoint - the resource endpoint
          * @param {object} [data] - any request data (only used if it is not null or undefined)
          * @param {requestCallback} [callback] - a callback function that will be called with the response as it's single parameter
+         * @param {object} [headers] - an object with keys containing header types (like "X-SESSION-UPDATE") and values containing header values (like "false") to be sent with the request
          * @returns {promise}
          * @private
          */
-        _ajax: function (method, endpoint, data, callback) {
+        _ajax: function (method, endpoint, data, callback, headers) {
             var self = this;
             var ajaxData = {
                 type: method,
                 url: this.synicURL + '/synic/api' + endpoint,
                 contentType: 'application/json',
-                headers: {},
+                headers: ( headers === undefined || headers === null ? {} : headers ),
                 cache: false,
                 success: function (response, status, xhr) {
                     if (typeof callback === 'function') {
@@ -70,7 +71,7 @@
                 error: function (xhr, status, error) {
                     self.errorCallback(xhr);
                     if (typeof callback === 'function') {
-                        callback(new Error(xhr));
+                        callback(new Error(xhr), xhr.status);
                     }
                 }
             };
@@ -199,16 +200,17 @@
          *
          * @param {number} [processLimit]
          * @param {requestCallback} [callback]
+         * @param {boolean} [renewSessionTimeout]
          * @returns {promise}
          */
-        listActiveKGs: function (processLimit, callback) {
+        listActiveKGs: function (processLimit, callback, renewSessionTimeout) {
             var self = this;
 
             if (typeof processLimit === 'undefined') {
                 processLimit = 10;
             }
 
-            return this._ajax('GET', '/kb').then(function (kgs) {
+            return this._ajax('GET', '/kb', undefined, reloadUpon401Callback, renewSessionTimeout ? undefined : X_SESSION_UPDATE_HEADER_FALSE).then(function (kgs) {
                 return self.listProcessesPaged(processLimit).then(function (processes) {
                     // Attach all the processes for each KG
                     kgs.forEach(function (kg) {
@@ -247,19 +249,21 @@
          *
          * @param {number} [processLimit]
          * @param {requestCallback} [callback]
+         * @param {boolean} [renewSessionTimeout]
          * @returns {promise}
          */
-        listKGs: function (processLimit, callback) {
-            return this.listActiveKGs(processLimit, callback);
+        listKGs: function (processLimit, callback, renewSessionTimeout) {
+            return this.listActiveKGs(processLimit, callback, renewSessionTimeout);
         },
         /**
          * Get an array of all the KG names instead of the full objects
          *
          * @param {requestCallback} [callback]
+         * @param {boolean} [renewSessionTimeout]
          * @returns {promise}
          */
-        listKGNames: function (callback) {
-            return this._ajax('GET', '/kb').then(function (kgs) {
+        listKGNames: function (callback, renewSessionTimeout) {
+            return this._ajax('GET', '/kb', null, reloadUpon401Callback, renewSessionTimeout ? undefined : X_SESSION_UPDATE_HEADER_FALSE).then(function (kgs) {
                 var ret = kgs.map(function (kg) {
                     return kg.name;
                 });
@@ -590,7 +594,7 @@
 
             var self = this;
 
-            return this._ajax('GET', '/processPaged?limit='+limit).then(function (resp) {
+            return this._ajax('GET', '/processPaged?limit='+limit, null, reloadUpon401Callback, X_SESSION_UPDATE_HEADER_FALSE).then(function (resp) {
                 var processes = resp.results;
                 processes.forEach(function (proc) {
                     proc.requestedTime = self._parseDate(proc.requestedTime);
@@ -638,12 +642,13 @@
          *
          * @param {string} procId - the process ID
          * @param {requestCallback} [callback]
+         * @param {boolean} [renewSessionTimeout]
          * @returns {promise}
          */
-        getProcess: function (procId, callback) {
+        getProcess: function (procId, callback, renewSessionTimeout) {
             var self = this;
 
-            return this._ajax('GET', '/process/' + encodeURIComponent(procId)).then(function (proc) {
+            return this._ajax('GET', '/process/' + encodeURIComponent(procId), null, reloadUpon401Callback, renewSessionTimeout ? undefined : X_SESSION_UPDATE_HEADER_FALSE).then(function (proc) {
                 proc.requestedTime = self._parseDate(proc.requestedTime);
                 proc.startedTime = self._parseDate(proc.startedTime);
                 proc.completedTime = self._parseDate(proc.completedTime);
@@ -752,10 +757,11 @@
         /**
          * Get a list of all the runnable applications
          * @param {requestCallback} [callback]
+         * @param {boolean} [renewSessionTimeout]
          * @returns {promise}
          */
-        listApplications: function (callback) {
-            return this._ajax('GET', '/application').then(function (resp) {
+        listApplications: function (callback, renewSessionTimeout) {
+            return this._ajax('GET', '/application', null, reloadUpon401Callback, renewSessionTimeout ? undefined : X_SESSION_UPDATE_HEADER_FALSE).then(function (resp) {
                 resp.forEach(function (app) {
                     app.processTypes = app.processTypes.sort();
                 });
@@ -793,7 +799,7 @@
                 processLimit = 10;
             }
 
-            return this._ajax('GET', '/scheduler/schedule').then(function (schedules) {
+            return this._ajax('GET', '/scheduler/schedule', null, reloadUpon401Callback, X_SESSION_UPDATE_HEADER_FALSE).then(function (schedules) {
                 return self.listProcessesPaged(processLimit).then(function (processes) {
 
                     schedules.forEach(function (schedule) {
@@ -1025,6 +1031,30 @@
             return this._ajax('GET', '/jobdata/' + encodeURIComponent(kgname) + '/' + encodeURIComponent(procId), null, callback);
         }
 
+    };
+
+    /**
+     * This header prevents its AJAX request from renewing the session timeout countdown.
+     * Provide this header with AJAX requests that the browser uses to "poll" the server for
+     * information but which don't indicate any action on the user's part, i.e. when the user is
+     * still "idle". This way, if the user is idle on a page that sends a certain AJAX request
+     * every 10 seconds (for example), then the user will still be unauthenticated after the
+     * set session timeout of 30 minutes (for example) and be forced to login again. Without this
+     * header, the idle user on the polling page would remain authenticated indefinitely.
+     */
+    const X_SESSION_UPDATE_HEADER_FALSE = { 'X-SESSION-UPDATE': false };
+
+    /**
+     * When a polling AJAX request using this callback receives a 401 response (indicating
+     * that the user's session has timed out), the page reloads, forcing the user to login again.
+     *
+     * @param responseOrError - looking for instance of Error
+     * @param httpStatusCode - looking for 401 (Unauthorized)
+     */
+    const reloadUpon401Callback = function (responseOrError, httpStatusCode) {
+        if (responseOrError instanceof Error && httpStatusCode === 401) {
+            window.location.reload();
+        }
     };
 
     return SynicClient;
