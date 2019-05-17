@@ -1,6 +1,6 @@
 {
   "name": "synic.js",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "authors": [
     "Clark Perkins <clark.perkins@digitalreasoning.com>"
   ],
@@ -22,7 +22,7 @@
   ],
   "dependencies": {
     "jquery": ">= 1.9.1",
-    "moment": "~2.11.0"
+    "moment": "~2.24.0"
   },
   "devDependencies": {
     "jasmine-ajax": "~3.0.0"
