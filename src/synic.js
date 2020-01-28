@@ -318,6 +318,22 @@
             return this._ajax('DELETE', '/kb/' + encodeURIComponent(kgname), null, callback);
         },
 
+        /**
+         * Attempts to structurally migrate a KG
+         *
+         * @param {string} kgname - the KG to migrate
+         * @param {boolean} forceMigration - forces a migration to be run, even if not required
+         * @param {requestCallback} [callback]
+         * @returns {promise}
+         */
+        migrateKG: /* istanbul ignore next */ function(kgname, forceMigration, callback){
+            var endpoint = '/kb/' + encodeURIComponent(kgname) + '/migrate';
+            if(forceMigration){
+                endpoint += '?force=true';
+            }
+            return this._ajax('POST', endpoint, null, callback);
+        },
+
         /*
          *   App Config
          */
